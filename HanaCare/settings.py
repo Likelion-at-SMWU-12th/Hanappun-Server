@@ -42,10 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # internal app
-
+    'users',
 
     # DRF 
-
+    'rest_framework',
     
 ]
 
@@ -108,6 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# minseo : AUTH 기본 모델을 Custom으로 변결
+AUTH_USER_MODEL = 'users.User'
 
 
 # Internationalization
