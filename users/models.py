@@ -1,41 +1,37 @@
 from django.db import models
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
 
 # minseo : UserManager
-class UserManager(BaseUserManager):
+class UserManager(DjangoUserManager):
     # minseo : 기본 유저 생성
-    def create_user(self, id, email, password, **extra_fields):
+    def create_user(self, username, email, password, **extra_fields):
         if not email:
             raise ValueError("이메일은 필수항목 입니다. ")
 
         user = self.model(
-            id=id,
+            username=username,
             email=email,  
+            password=password,
             **extra_fields
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
     
-    # minseo : 슈퍼 유저 생성
-    def create_superuser(self, email, password=None, **extra_fields):
-        user = self.create_user(
-            email=email,
-            password=password,
-            **extra_fields
-        )
-        user.is_admin = True
-        user.save(using=self._db)
-        return user
+    def create_superuser(self, username, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return super().create_superuser(username, email, password, **extra_fields) # 수퍼 클래스의 create_superuser 호출
+    
 
 # minseo : User 모델
-class User(AbstractBaseUser):
+class User(AbstractUser):
     class Meta:
         db_table = "User"
 
-    id = models.CharField("아이디", max_length=50, unique=True, primary_key=True)
+    username = models.CharField("아이디", max_length=50, unique=True, primary_key=True)
     nickname = models.CharField("닉네임", max_length=15)
-    email = models.EmailField("이메일", unique=True)
+    email = models.EmailField("이메일", unique=True, blank=True)
     friends = models.ManyToManyField("self", symmetrical=False, related_name='friends_set', blank=True)
 
     constitution_8_categories = (
@@ -52,3 +48,4 @@ class User(AbstractBaseUser):
     my_clinic = models.CharField("나의 한의원", max_length=15, blank=True)
 
     objects = UserManager()
+
