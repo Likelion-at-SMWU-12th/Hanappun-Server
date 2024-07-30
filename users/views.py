@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
 
-from .serializers import UserSerializer, UserProfileSerializer, AcceptFriendRequestSerializer, FriendsListSerializer
+from .serializers import UserSerializer, UserProfileSerializer, AcceptFriendRequestSerializer, FriendsListSerializer, DeleteFriendSerializer
 from .models import User
 
 # Create your views here.
@@ -123,7 +123,7 @@ class FriendsView(APIView):
             user.friends.add(friend)
             friend.friends.add(user)
             
-            return Response({"message": "우리 케어 요청이 수락되었습니다.",}, status = status.HTTP_200_OK)
+            return Response({"message": "우리 케어 친구가 추가되었습니다.",}, status = status.HTTP_200_OK)
         
         return Response({"message": serializer.errors}, status = status.HTTP_400_BAD_REQUEST)
     
@@ -137,3 +137,22 @@ class FriendsView(APIView):
         serializer = FriendsListSerializer(user)
         return Response({"message": "조회에 성공하였습니다.",
                         "result": serializer.data}, status=status.HTTP_200_OK)
+    
+    def delete(self, request):
+        serializer = DeleteFriendSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            friend_username = serializer.validated_data['friend_username']
+            user = request.user
+            try:
+                friend = User.objects.get(username=friend_username)
+            except User.DoesNotExist:
+                return Response({"message": "사용자가 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
+            
+            if friend in user.friends.all():
+                user.friends.remove(friend)
+                friend.friends.remove(user)
+                return Response({"message": "우리 케어 친구가 성공적으로 삭제되었습니다."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "이 사용자는 친구 목록에 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

@@ -55,8 +55,19 @@ class AcceptFriendRequestSerializer(Serializer):
             raise ValidationError("이미 우리 케어 관계입니다.")
         
         return data
-    
+
+# minseo : 모든 친구 리스트 보기 
 class FriendsListSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ("friends", )
+
+# minseo : 친구 삭제
+class DeleteFriendSerializer(Serializer):
+    friend_username = CharField()
+
+    def validate_friend_username(self, value):
+        User = get_user_model()
+        if not User.objects.filter(username=value).exists():
+            raise ValidationError("사용자가 존재하지 않습니다.")
+        return value
