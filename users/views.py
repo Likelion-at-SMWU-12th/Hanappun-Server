@@ -24,13 +24,15 @@ class SignUpView(APIView):
 
         # 비밀번호 일치 확인
         if password != password2:
-            return Response({"message": ["입력한 비밀번호가 다릅니다."]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status" : status.HTTP_400_BAD_REQUEST,
+                            "message": "입력한 비밀번호가 다릅니다."}, )
         
         # 비밀번호 유효성 검사
         try:
             validate_password(password)
         except ValidationError as e:
-            return Response({"message": e.messages}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status" : status.HTTP_400_BAD_REQUEST,
+                            "message": e.messages}, )
 
         # serializer로 유효성 검사 후 데이터 전달
         serializer = UserSerializer(data=request.data)
@@ -43,9 +45,11 @@ class SignUpView(APIView):
             user.set_password(password)
             user.save()
 
-            return Response({"message":"회원가입에 성공하였습니다."}, status=status.HTTP_201_CREATED)
+            return Response({"status" : status.HTTP_201_CREATED,
+                            "message": "회원가입에 성공하였습니다. "}, )
         else:
-            return Response({"message": f"${serializer.errors}"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status" : status.HTTP_400_BAD_REQUEST,
+                            "message": serializer.errors}, )
 
 # minseo : 로그인 뷰
 class LoginView(APIView):
@@ -56,16 +60,18 @@ class LoginView(APIView):
     
         if user is not None:
             auth_login(request, user) 
-            return Response({"로그인에 성공하였습니다."}, status=status.HTTP_200_OK)
+            return Response({"status" : status.HTTP_200_OK,
+                        "message": "로그인에 성공하였습니다. "}, )
         else:
-            return Response({"이름 혹은 비밀번호가 잘못 입력 되었습니다."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"status" : status.HTTP_401_UNAUTHORIZED,
+                        "message": "이름 혹은 비밀번호가 잘못 입력 되었습니다. "}, )
 
 # minseo : 로그아웃 뷰
 class LogoutView(APIView):
     def post(self, request):
         auth_logout(request)
-        return Response({"로그아웃에 성공하였습니다."}, status=status.HTTP_200_OK)
-
+        return Response({"status" : status.HTTP_200_OK,
+                                "message": "로그아웃에 성공하였습니다. "}, )
 # minseo : 탈퇴 뷰
 class QuitView(APIView):
     def delete(self, request):
@@ -76,9 +82,11 @@ class QuitView(APIView):
         if user is not None:
             user.delete()
             auth_logout(request) 
-            return Response({"탈퇴에 성공하였습니다 "}, status=status.HTTP_200_OK)
+            return Response({"status" : status.HTTP_200_OK,
+                        "message": "탈퇴에 성공하였습니다. "}, )
         else:
-            return Response({"이름 혹은 비밀번호가 잘못 입력 되었습니다."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"status" : status.HTTP_401_UNAUTHORIZED,
+                        "message": "이름 혹은 비밀번호가 잘못 입력 되었습니다. "}, )
         
 # minseo : 프로필 조회, 회원 정보 수정
 class ProfileView(APIView):
@@ -89,7 +97,9 @@ class ProfileView(APIView):
     def get(self, request):
         user = self.get_object(request.data.get('username'))
         serializer = UserProfileSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK) 
+        return Response({"status" : status.HTTP_200_OK,
+                        "message": "조회에 성공하였습니다. ",
+                        "result" : serializer.data}, )
     
     # 회원 정보 수정
     def patch(self, request):
@@ -98,7 +108,10 @@ class ProfileView(APIView):
             user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "수정에 성공하였습니다. "}, status=status.HTTP_200_OK)
+            return Response({"status" : status.HTTP_200_OK,
+                        "message": "수정에 성공하였습니다. ",
+                        "result" : serializer.data}, )
         else:
-            return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status" : status.HTTP_400_BAD_REQUEST,
+                        "message": serializer.errors,}, )
     
