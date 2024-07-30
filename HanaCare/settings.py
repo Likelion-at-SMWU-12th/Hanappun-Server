@@ -42,10 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # internal app
-    'users'
+    'users',
 
     # DRF 
-
+    'rest_framework',
     
 ]
 
