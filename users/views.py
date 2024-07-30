@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
 
-from .serializers import UserSerializer, UserProfileSerializer
+from .serializers import UserSerializer, UserProfileSerializer, AcceptFriendRequestSerializer
 from .models import User
 
 # Create your views here.
@@ -24,15 +24,13 @@ class SignUpView(APIView):
 
         # 비밀번호 일치 확인
         if password != password2:
-            return Response({"status" : status.HTTP_400_BAD_REQUEST,
-                            "message": "입력한 비밀번호가 다릅니다."}, )
+            return Response({"message": "입력한 비밀번호가 다릅니다."}, status = status.HTTP_400_BAD_REQUEST)
         
         # 비밀번호 유효성 검사
         try:
             validate_password(password)
         except ValidationError as e:
-            return Response({"status" : status.HTTP_400_BAD_REQUEST,
-                            "message": e.messages}, )
+            return Response({"message": e.messages}, status = status.HTTP_400_BAD_REQUEST)
 
         # serializer로 유효성 검사 후 데이터 전달
         serializer = UserSerializer(data=request.data)
@@ -45,11 +43,9 @@ class SignUpView(APIView):
             user.set_password(password)
             user.save()
 
-            return Response({"status" : status.HTTP_201_CREATED,
-                            "message": "회원가입에 성공하였습니다. "}, )
+            return Response({"message": "회원가입에 성공하였습니다. "}, status = status.HTTP_201_CREATED)
         else:
-            return Response({"status" : status.HTTP_400_BAD_REQUEST,
-                            "message": serializer.errors}, )
+            return Response({"message": serializer.errors}, status = status.HTTP_400_BAD_REQUEST)
 
 # minseo : 로그인 뷰
 class LoginView(APIView):
@@ -60,18 +56,15 @@ class LoginView(APIView):
     
         if user is not None:
             auth_login(request, user) 
-            return Response({"status" : status.HTTP_200_OK,
-                        "message": "로그인에 성공하였습니다. "}, )
+            return Response({"message": "로그인에 성공하였습니다. "}, status = status.HTTP_200_OK)
         else:
-            return Response({"status" : status.HTTP_401_UNAUTHORIZED,
-                        "message": "이름 혹은 비밀번호가 잘못 입력 되었습니다. "}, )
+            return Response({"message": "이름 혹은 비밀번호가 잘못 입력 되었습니다. "}, status = status.HTTP_401_UNAUTHORIZED)
 
 # minseo : 로그아웃 뷰
 class LogoutView(APIView):
     def post(self, request):
         auth_logout(request)
-        return Response({"status" : status.HTTP_200_OK,
-                                "message": "로그아웃에 성공하였습니다. "}, )
+        return Response({"message": "로그아웃에 성공하였습니다. "}, status = status.HTTP_200_OK)
 # minseo : 탈퇴 뷰
 class QuitView(APIView):
     def delete(self, request):
@@ -82,11 +75,9 @@ class QuitView(APIView):
         if user is not None:
             user.delete()
             auth_logout(request) 
-            return Response({"status" : status.HTTP_200_OK,
-                        "message": "탈퇴에 성공하였습니다. "}, )
+            return Response({"message": "탈퇴에 성공하였습니다. "}, status = status.HTTP_200_OK)
         else:
-            return Response({"status" : status.HTTP_401_UNAUTHORIZED,
-                        "message": "이름 혹은 비밀번호가 잘못 입력 되었습니다. "}, )
+            return Response({"message": "이름 혹은 비밀번호가 잘못 입력 되었습니다. "}, status = status.HTTP_401_UNAUTHORIZED)
         
 # minseo : 프로필 조회, 회원 정보 수정
 class ProfileView(APIView):
@@ -97,9 +88,8 @@ class ProfileView(APIView):
     def get(self, request):
         user = self.get_object(request.data.get('username'))
         serializer = UserProfileSerializer(user)
-        return Response({"status" : status.HTTP_200_OK,
-                        "message": "조회에 성공하였습니다. ",
-                        "result" : serializer.data}, )
+        return Response({"message": "조회에 성공하였습니다. ",
+                        "result" : serializer.data}, status = status.HTTP_200_OK)
     
     # 회원 정보 수정
     def patch(self, request):
@@ -108,10 +98,27 @@ class ProfileView(APIView):
             user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"status" : status.HTTP_200_OK,
-                        "message": "수정에 성공하였습니다. ",
-                        "result" : serializer.data}, )
+            return Response({"message": "수정에 성공하였습니다. ",
+                        "result" : serializer.data}, 
+                        status=status.HTTP_200_OK)
         else:
-            return Response({"status" : status.HTTP_400_BAD_REQUEST,
-                        "message": serializer.errors,}, )
+            return Response({"message": serializer.errors,}, status = status.HTTP_400_BAD_REQUEST)
     
+# minseo : 우리 케어 친구 신청 기능
+class FriendsView(APIView):
+    def post(self, request):
+        serializer = AcceptFriendRequestSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            friend_username = serializer.validated_data['friend_username']
+            user = request.user
+            try:
+                friend = User.objects.get(username=friend_username)
+            except User.DoesNotExist:
+                return Response({"message": "사용자가 존재하지 않습니다.",}, status = status.HTTP_404_NOT_FOUND)
+            
+            user.friends.add(friend)
+            friend.friends.add(user)
+            
+            return Response({"message": "우리 케어 요청이 수락되었습니다.",}, status = status.HTTP_200_OK)
+        
+        return Response({"message": serializer.errors}, status = status.HTTP_400_BAD_REQUEST)
