@@ -27,7 +27,7 @@ class UserSerializer(ModelSerializer):
 class UserProfileSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ("username", "nickname", "email", "friends", "constitution_8")
+        fields = ("username", "nickname", "email", "friends", "constitution_8", "my_clinic")
 
 # minseo : 우리 케어 친구 신청
 class AcceptFriendRequestSerializer(Serializer):
@@ -55,3 +55,8 @@ class AcceptFriendRequestSerializer(Serializer):
             raise ValidationError("이미 우리 케어 관계입니다.")
         
         return data
+    
+class FriendsListSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("friends", )

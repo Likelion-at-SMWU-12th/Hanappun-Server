@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
 
-from .serializers import UserSerializer, UserProfileSerializer, AcceptFriendRequestSerializer
+from .serializers import UserSerializer, UserProfileSerializer, AcceptFriendRequestSerializer, FriendsListSerializer
 from .models import User
 
 # Create your views here.
@@ -126,3 +126,14 @@ class FriendsView(APIView):
             return Response({"message": "우리 케어 요청이 수락되었습니다.",}, status = status.HTTP_200_OK)
         
         return Response({"message": serializer.errors}, status = status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        username=request.data.get('username')
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({"message": "사용자를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = FriendsListSerializer(user)
+        return Response({"message": "조회에 성공하였습니다.",
+                        "result": serializer.data}, status=status.HTTP_200_OK)
