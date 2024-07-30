@@ -14,5 +14,7 @@ urlpatterns=[
     path('logout/', views.LogoutView.as_view(), name='logout_view'), # /users/logout/
     path('quit/', views.QuitView.as_view(), name='quit_view'), # /users/quit/
     path('profile/', views.ProfileView.as_view(), name='profile_view'), # /users/profile/
+    path('ourcare/', views.FriendsView.as_view(), name='ourcare_view'), # /users/ourcare/
+
     path('admin', admin.site.urls),
 ]

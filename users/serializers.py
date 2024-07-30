@@ -1,4 +1,5 @@
-from rest_framework.serializers import ModelSerializer, StringRelatedField
+from rest_framework.serializers import ModelSerializer, CharField, ValidationError, Serializer
+from django.contrib.auth import get_user_model
 from .models import User
 
 class UserSerializer(ModelSerializer):
@@ -22,8 +23,35 @@ class UserSerializer(ModelSerializer):
         user.save()
         return user
     
+# minseo : 프로필 조회, 수정에 사용
 class UserProfileSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ("username", "nickname", "email", "friends", "constitution_8")
 
+# minseo : 우리 케어 친구 신청
+class AcceptFriendRequestSerializer(Serializer):
+    friend_username = CharField()
+
+    def validate_friend_username(self, value):
+        User = get_user_model()
+        if not User.objects.filter(username=value).exists():
+            raise ValidationError("사용자가 존재하지 않습니다.")
+        return value
+
+    def validate(self, data):
+        user = self.context['request'].user
+        friend_username = data['friend_username']
+        User = get_user_model()
+        try:
+            friend = User.objects.get(username=friend_username)
+        except User.DoesNotExist:
+            raise ValidationError("사용자가 존재하지 않습니다.")
+        
+        if friend == user:
+            raise ValidationError("자신에게는 우리 케어 신청을 할 수 없습니다.")
+        
+        if friend in user.friends.all():
+            raise ValidationError("이미 우리 케어 관계입니다.")
+        
+        return data
