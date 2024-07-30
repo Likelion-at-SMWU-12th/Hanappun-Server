@@ -6,8 +6,10 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.generics import get_object_or_404
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserProfileSerializer
+from .models import User
 
 # Create your views here.
 
@@ -64,8 +66,6 @@ class LogoutView(APIView):
         auth_logout(request)
         return Response({"로그아웃에 성공하였습니다."}, status=status.HTTP_200_OK)
 
-
-
 # minseo : 탈퇴 뷰
 class QuitView(APIView):
     def delete(self, request):
@@ -79,3 +79,14 @@ class QuitView(APIView):
             return Response({"탈퇴에 성공하였습니다 "}, status=status.HTTP_200_OK)
         else:
             return Response({"이름 혹은 비밀번호가 잘못 입력 되었습니다."}, status=status.HTTP_401_UNAUTHORIZED)
+        
+# minseo : 프로필 조회, 수정
+class ProfileView(APIView):
+    def get_object(self, username):
+        return get_object_or_404(User, username=username)
+
+    # 프로필 조회
+    def get(self, request):
+        user = self.get_object(request.data.get('username'))
+        serializer = UserProfileSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK) 

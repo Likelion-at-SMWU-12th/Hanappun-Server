@@ -25,5 +25,5 @@ class UserSerializer(ModelSerializer):
 class UserProfileSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "nickname", "email", "friends", "constitution_8")
+        fields = ("username", "nickname", "email", "friends", "constitution_8")
 

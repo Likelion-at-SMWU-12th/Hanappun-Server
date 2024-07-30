@@ -13,5 +13,6 @@ urlpatterns=[
     path('login/', views.LoginView.as_view(), name='login_view'), # /users/login/
     path('logout/', views.LogoutView.as_view(), name='logout_view'), # /users/logout/
     path('quit/', views.QuitView.as_view(), name='quit_view'), # /users/quit/
+    path('profile/', views.ProfileView.as_view(), name='profile_view'), # /users/profile/
     path('admin', admin.site.urls),
 ]
