@@ -4,12 +4,12 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 # minseo : UserManager
 class UserManager(BaseUserManager):
     # minseo : 기본 유저 생성
-    def create_user(self, account, email, password, **extra_fields):
+    def create_user(self, id, email, password, **extra_fields):
         if not email:
             raise ValueError("이메일은 필수항목 입니다. ")
 
         user = self.model(
-            account=account,
+            id=id,
             email=email,  
             **extra_fields
         )
