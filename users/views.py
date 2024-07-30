@@ -80,7 +80,7 @@ class QuitView(APIView):
         else:
             return Response({"이름 혹은 비밀번호가 잘못 입력 되었습니다."}, status=status.HTTP_401_UNAUTHORIZED)
         
-# minseo : 프로필 조회, 수정
+# minseo : 프로필 조회, 회원 정보 수정
 class ProfileView(APIView):
     def get_object(self, username):
         return get_object_or_404(User, username=username)
@@ -90,3 +90,15 @@ class ProfileView(APIView):
         user = self.get_object(request.data.get('username'))
         serializer = UserProfileSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK) 
+    
+    # 회원 정보 수정
+    def patch(self, request):
+        user = self.get_object(request.data.get('username'))
+        serializer = UserProfileSerializer(
+            user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "수정에 성공하였습니다. "}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
