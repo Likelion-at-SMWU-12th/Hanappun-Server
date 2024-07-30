@@ -49,5 +49,6 @@ class User(AbstractBaseUser):
         ('Gastrotonia', '토음')
     )
     constitution_8 = models.CharField("8체질", choices=constitution_8_categories, max_length=50, blank=True)
-    
+    my_clinic = models.CharField("나의 한의원", max_length=15, blank=True)
+
     objects = UserManager()
