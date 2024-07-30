@@ -65,6 +65,7 @@ class LogoutView(APIView):
     def post(self, request):
         auth_logout(request)
         return Response({"message": "로그아웃에 성공하였습니다. "}, status = status.HTTP_200_OK)
+    
 # minseo : 탈퇴 뷰
 class QuitView(APIView):
     def delete(self, request):
@@ -81,19 +82,22 @@ class QuitView(APIView):
         
 # minseo : 프로필 조회, 회원 정보 수정
 class ProfileView(APIView):
-    def get_object(self, username):
-        return get_object_or_404(User, username=username)
-
     # 프로필 조회
     def get(self, request):
-        user = self.get_object(request.data.get('username'))
+        username=request.data.get('username')
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({"message": "사용자를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+        
         serializer = UserProfileSerializer(user)
-        return Response({"message": "조회에 성공하였습니다. ",
-                        "result" : serializer.data}, status = status.HTTP_200_OK)
+        return Response({"message": "조회에 성공하였습니다.",
+                        "result": serializer.data}, status=status.HTTP_200_OK)
     
     # 회원 정보 수정
     def patch(self, request):
-        user = self.get_object(request.data.get('username'))
+        username=request.data.get('username')
+        user = User.objects.get(username=username)
         serializer = UserProfileSerializer(
             user, data=request.data, partial=True)
         if serializer.is_valid():
