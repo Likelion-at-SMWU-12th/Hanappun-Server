@@ -61,12 +61,5 @@ class LoginView(APIView):
 # minseo : 로그아웃 뷰
 class LogoutView(APIView):
     def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
-            auth_logout(request) 
-            return Response({"로그아웃에 성공하였습니다."}, status=status.HTTP_200_OK)
-        else:
-            return Response({"이름 혹은 비밀번호가 잘못 입력 되었습니다."}, status=status.HTTP_401_UNAUTHORIZED)
+        auth_logout(request)
+        return Response({"로그아웃에 성공하였습니다."}, status=status.HTTP_200_OK)
