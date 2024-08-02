@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     # internal app
     'users',
+    'clinic',
 
     # DRF 
     'rest_framework',
