@@ -96,17 +96,20 @@ class ProfileView(APIView):
     # 회원 정보 수정
     def patch(self, request):
         username=request.data.get('username')
-        user = User.objects.get(username=username)
-        serializer = UserProfileSerializer(
-            user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "수정에 성공하였습니다. ",
-                        "result" : serializer.data}, 
-                        status=status.HTTP_200_OK)
-        else:
-            return Response({"message": serializer.errors,}, status = status.HTTP_400_BAD_REQUEST)
-    
+        try:
+            user = User.objects.get(username=username)
+            serializer = UserProfileSerializer(
+                user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"message": "수정에 성공하였습니다. ",
+                            "result" : serializer.data}, 
+                            status=status.HTTP_200_OK)
+            else:
+                return Response({"message": serializer.errors,}, status = status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({"message": "사용자를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
 # minseo : 우리 케어 친구 신청 기능
 class FriendsView(APIView):
     def post(self, request):
