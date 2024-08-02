@@ -41,14 +41,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # django filter
+    'django_filters',
+
+    # DRF 
+    'rest_framework',
+
     # internal app
     'users',
     'clinic',
     'review',
 
-    # DRF 
-    'rest_framework',
-    
 ]
 
 MIDDLEWARE = [
