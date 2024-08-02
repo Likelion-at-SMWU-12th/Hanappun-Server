@@ -22,7 +22,7 @@ class ReservationViewSet(ModelViewSet):
         return ReservationSerializer
 
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['date']
+    filterset_fields = ['client']
 
 
 # minseo : 예약 날짜로 예약 정보 조회
@@ -38,3 +38,4 @@ class ReservationByDateView(APIView):
             return Response(serializer.data)
         except Exception as error:
             return Response({"error": str(error)}, status=status.HTTP_400_BAD_REQUEST)
+
