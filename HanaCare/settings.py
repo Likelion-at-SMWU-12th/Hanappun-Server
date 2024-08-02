@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # internal app
     'users',
     'clinic',
+    'review',
 
     # DRF 
     'rest_framework',
