@@ -12,10 +12,14 @@ class Review(models.Model):
     rate = models.IntegerField(verbose_name='별점')
 
     CATEGORY_CHOICES = [
-        ('Facility', '시설이 쾌적해요'),
-        ('Prescription', '약 처방이 잘 맞아요'),
-        ('Health', '건강 관리에 철저해요'),
-        ('Kindness', '의료진, 직원이 친절해요'),
+        'Facility',
+        'Prescription',
+        'Health',
+        'Kindness',
     ]
 
-    review_cate = models.CharField(max_length=50, choices=CATEGORY_CHOICES, blank=True)
+    is_selected_Facility = models.BooleanField(verbose_name='시설이 쾌적해요')
+    is_selected_Prescription = models.BooleanField(verbose_name='약 처방이 잘 맞아요')
+    is_selected_Health = models.BooleanField(verbose_name='건강 관리에 철저해요')
+    is_selected_Kindness = models.BooleanField(verbose_name='의료진, 직원이 친절해요')
+    

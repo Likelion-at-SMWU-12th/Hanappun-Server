@@ -22,8 +22,19 @@ class ReviewViewSet(ModelViewSet):
 
 # minseo : 특정 한의원의 리뷰 카테고리 합계
 class CountReviewCategory(APIView):
-    def get(self, request, clinic_id):
-        review_counts = Review.objects.filter(clinic_id=clinic_id).values('review_cate').annotate(count=Count('review_cate'))
-        response_data = {item['review_cate']: item['count'] for item in review_counts}
+    def get(self, request, clinic_id, format=None):
+        reviews = Review.objects.filter(clinic_id=clinic_id)
 
-        return Response(response_data, status=status.HTTP_200_OK)
+        count_facility = reviews.filter(is_selected_Facility=True).count()
+        count_prescription = reviews.filter(is_selected_Prescription=True).count()
+        count_health = reviews.filter(is_selected_Health=True).count()
+        count_kindness = reviews.filter(is_selected_Kindness=True).count()
+
+        data = {
+            'facility_count': count_facility,
+            'prescription_count': count_prescription,
+            'health_count': count_health,
+            'kindness_count': count_kindness,
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
