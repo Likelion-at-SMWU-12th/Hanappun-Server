@@ -1,21 +1,38 @@
-from rest_framework import generics
-from .models import Event
-from .serializers import EventSerializer
-from datetime import datetime
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import Appointment, EatingHabit, ConditionStatus, User
 
-# View to list all events
-class EventListView(generics.ListAPIView):
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
+def get_calendar_events(request):
+    date = request.GET.get('date')
 
-# View to list events for a specific date
-class EventListByDateView(generics.ListAPIView):
-    serializer_class = EventSerializer
+    appointments = Appointment.objects.filter(date=date).select_related('user')
+    eating_habits = EatingHabit.objects.filter(date=date).select_related('user')
+    condition_statuses = ConditionStatus.objects.filter(date=date).select_related('user')
 
-    def get_queryset(self):
-        date = self.kwargs['date']
-        try:
-            date_obj = datetime.strptime(date, '%Y-%m-%d').date()
-            return Event.objects.filter(date=date_obj)
-        except ValueError:
-            return Event.objects.none()
+    response = {
+        "appointments": [
+            {
+                "user": appointment.user.name,
+                "date": appointment.date,
+                "time": appointment.time,
+                "description": appointment.description
+            }
+            for appointment in appointments
+        ],
+        "eating_habits": [
+            {
+                "user": eating_habit.user.name,
+                "total_evaluation": eating_habit.total_evaluation
+            }
+            for eating_habit in eating_habits
+        ],
+        "condition_statuses": [
+            {
+                "user": condition_status.user.name,
+                "status": condition_status.status
+            }
+            for condition_status in condition_statuses
+        ],
+    }
+
+    return JsonResponse(response)
