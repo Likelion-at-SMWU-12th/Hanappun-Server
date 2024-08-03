@@ -41,18 +41,19 @@ class AcceptFriendRequestSerializer(Serializer):
         return value
 
     def validate(self, data):
-        user = data['my_username']
+        my_username = data['my_username']
         friend_username = data['friend_username']
         User = get_user_model()
         try:
+            my = User.objects.get(username=my_username)
             friend = User.objects.get(username=friend_username)
         except User.DoesNotExist:
             raise ValidationError("사용자가 존재하지 않습니다.")
         
-        if friend == user:
+        if friend == my:
             raise ValidationError("자신에게는 우리 케어 신청을 할 수 없습니다.")
         
-        if friend in user.friends.all():
+        if friend in my.friends.all():
             raise ValidationError("이미 우리 케어 관계입니다.")
         
         return data
