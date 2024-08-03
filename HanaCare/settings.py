@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'clinic',
     'review',
     'reservation',
+    'condition',
 
     # CORS
     'corsheaders',
