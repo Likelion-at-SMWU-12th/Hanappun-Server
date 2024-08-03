@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 
-from .serializers import ClinicSerializer
-from .models import Clinic
+from .serializers import ClinicSerializer, DoctorSerializer
+from .models import Clinic, Doctor
 
 # Create your views here.
 
@@ -9,3 +9,8 @@ from .models import Clinic
 class ClinicViewSet(ModelViewSet):
     queryset = Clinic.objects.all()
     serializer_class = ClinicSerializer
+
+# minseo : 의료진 CRUD 뷰셋
+class DoctorViewSet(ModelViewSet):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
