@@ -24,11 +24,22 @@ class Clinic(models.Model):
     
 
 # minseo : 이미지 경로 지정 함수
-def image_upload_path(instance, filename):
-    return f'{instance.clinic.id}/{filename}'
+def clinic_image_upload_path(instance, filename):
+    return f'{instance.clinic.id}/clinic/{filename}'
+
+def doctor_image_upload_path(instance, filename):
+    return f'{instance.clinic.id}/doctor/{filename}'
 
 # minseo : 한의원 다중 이미지 정보 모델
 class ClinicImage(models.Model):
     id = models.AutoField(primary_key=True)
     clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE, related_name='image')
-    image = models.ImageField(upload_to=image_upload_path)
+    image = models.ImageField(upload_to=clinic_image_upload_path)
+
+# minseo : 한의원 의사 정보 모델
+class Doctor(models.Model):
+    name = models.CharField(max_length=15, verbose_name="의료진명")
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE, verbose_name='한의원 아이디')
+    image = models.ImageField(upload_to=doctor_image_upload_path)
+    profile = models.JSONField(blank=True, verbose_name="약력")
+
