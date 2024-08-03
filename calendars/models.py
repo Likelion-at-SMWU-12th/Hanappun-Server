@@ -1,9 +1,18 @@
 from django.db import models
+from users.models import User
 
-class Event(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.TextField()
+class Appointment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField()
+    time = models.TimeField()
+    description = models.CharField(max_length=255)
 
-    def __str__(self):
-        return self.title
+class EatingHabit(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateField()
+    total_evaluation = models.TextField()
+
+class ConditionStatus(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateField()
+    status = models.TextField()
