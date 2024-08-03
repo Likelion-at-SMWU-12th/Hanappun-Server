@@ -15,11 +15,14 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Reservation',
+            name='Condition',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateTimeField(verbose_name='예약일정')),
-                ('client', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='환자 아이디')),
+                ('date', models.DateField()),
+                ('condition_cate', models.CharField(max_length=255)),
+                ('mood_cate', models.CharField(max_length=255)),
+                ('memo', models.TextField(blank=True, null=True)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

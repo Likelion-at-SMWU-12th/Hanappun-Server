@@ -26,6 +26,7 @@ urlpatterns = [
     path('clinic/', include('clinic.urls')),
     path('review/', include('review.urls')),
     path('reservation/', include('reservation.urls')),
+    path('test/', include('condition.urls')),
 ] 
 
 # minseo : media 파일 경로 설정
