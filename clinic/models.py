@@ -20,7 +20,9 @@ class Clinic(models.Model):
         ('Accident', '교통사고 전문'),
         ('Acupuncture', '침 치료'),
     )
-    clinic_cate = models.CharField("한의원 카테고리", choices=clinic_categories, max_length=50, blank=True)
+    clinic_cate_1 = models.CharField("한의원 카테고리 1", choices=clinic_categories, max_length=50, blank=True)
+    clinic_cate_2 = models.CharField("한의원 카테고리 2", choices=clinic_categories, max_length=50, blank=True)
+    clinic_cate_3 = models.CharField("한의원 카테고리 3", choices=clinic_categories, max_length=50, blank=True)
     
 
 # minseo : 이미지 경로 지정 함수
