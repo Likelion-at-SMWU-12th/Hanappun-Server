@@ -83,8 +83,8 @@ class QuitView(APIView):
 class ProfileView(APIView):
     # 프로필 조회
     def get(self, request):
-        username=request.data.get('username')
         try:
+            username = request.GET.get('username')
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             return Response({"message": "사용자를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
@@ -130,8 +130,8 @@ class FriendsView(APIView):
         return Response({"message": serializer.errors}, status = status.HTTP_400_BAD_REQUEST)
     
     def get(self, request):
-        username=request.data.get('username')
         try:
+            username = request.GET.get('username')
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             return Response({"message": "사용자를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
@@ -139,6 +139,7 @@ class FriendsView(APIView):
         serializer = FriendsListSerializer(user)
         return Response({"message": "조회에 성공하였습니다.",
                         "result": serializer.data}, status=status.HTTP_200_OK)
+
     
     def delete(self, request):
         serializer = DeleteFriendSerializer(data=request.data, context={'request': request})
