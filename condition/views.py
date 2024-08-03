@@ -42,7 +42,7 @@ class ConditionUpdateView(APIView):
         user_username = request.data.get('user')
         user = get_object_or_404(User, username=user_username)
         data = request.data.copy()
-        data['user'] = user.id  # 사용자 이름을 ID로 변환
+        data['user'] = user  # 사용자 이름을 ID로 변환
         
         serializer = ConditionSerializer(condition, data=data, partial=True)
         if serializer.is_valid():
@@ -67,3 +67,32 @@ class ConditionByDateView(APIView):
         conditions = Condition.objects.filter(date=date)
         serializer = ConditionSerializer(conditions, many=True)
         return Response({"message": "특정 날짜의 컨디션 기록 조회 성공", "data": serializer.data}, status=status.HTTP_200_OK)
+    
+    def put(self, request, date):
+        conditions = Condition.objects.filter(date=date)
+        if not conditions.exists():
+            return Response({"message": "해당 날짜에 대한 컨디션 기록이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+        user_username = request.data.get('user')
+        user = get_object_or_404(User, username=user_username)
+        data = request.data.copy()
+        data['user'] = user  # 사용자 이름을 ID로 변환
+
+        response_data = []
+        for condition in conditions:
+            serializer = ConditionSerializer(condition, data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                response_data.append(serializer.data)
+            else:
+                return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"message": "특정 날짜의 컨디션 기록이 수정되었습니다.", "data": response_data}, status=status.HTTP_200_OK)
+    
+    def delete(self, request, date):
+        conditions = Condition.objects.filter(date=date)
+        if not conditions.exists():
+            return Response({"message": "해당 날짜에 대한 컨디션 기록이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+        conditions.delete()
+        return Response({"message": "특정 날짜의 컨디션 기록이 삭제되었습니다."}, status=status.HTTP_204_NO_CONTENT)
