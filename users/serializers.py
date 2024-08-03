@@ -31,6 +31,7 @@ class UserProfileSerializer(ModelSerializer):
 
 # minseo : 우리 케어 친구 신청
 class AcceptFriendRequestSerializer(Serializer):
+    my_username = CharField()
     friend_username = CharField()
 
     def validate_friend_username(self, value):
@@ -40,7 +41,7 @@ class AcceptFriendRequestSerializer(Serializer):
         return value
 
     def validate(self, data):
-        user = self.context['request'].user
+        user = data['my_username']
         friend_username = data['friend_username']
         User = get_user_model()
         try:

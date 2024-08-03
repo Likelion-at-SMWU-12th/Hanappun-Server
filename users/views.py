@@ -113,21 +113,24 @@ class ProfileView(APIView):
 # minseo : 우리 케어 친구 신청 기능
 class FriendsView(APIView):
     def post(self, request):
-        serializer = AcceptFriendRequestSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            friend_username = serializer.validated_data['friend_username']
-            user = request.user
-            try:
-                friend = User.objects.get(username=friend_username)
-            except User.DoesNotExist:
-                return Response({"message": "사용자가 존재하지 않습니다.",}, status = status.HTTP_404_NOT_FOUND)
+        try:
+            serializer = AcceptFriendRequestSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                friend_username = serializer.validated_data['friend_username']
+                user = request.user
+                try:
+                    friend = User.objects.get(username=friend_username)
+                except User.DoesNotExist:
+                    return Response({"message": "사용자가 존재하지 않습니다.",}, status = status.HTTP_404_NOT_FOUND)
+                
+                user.friends.add(friend)
+                friend.friends.add(user)
+                
+                return Response({"message": "우리 케어 친구가 추가되었습니다.",}, status = status.HTTP_200_OK)
             
-            user.friends.add(friend)
-            friend.friends.add(user)
-            
-            return Response({"message": "우리 케어 친구가 추가되었습니다.",}, status = status.HTTP_200_OK)
-        
-        return Response({"message": serializer.errors}, status = status.HTTP_400_BAD_REQUEST)
+            return Response({"message": serializer.errors}, status = status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({"message": "사용자를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)    
     
     def get(self, request):
         try:
