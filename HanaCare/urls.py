@@ -28,6 +28,7 @@ urlpatterns = [
     path('reservation/', include('reservation.urls')),
     path('', include('condition.urls')),
     path('', include('calendars.urls')),
+    path('', include('meal.urls')),
 ] 
 
 # minseo : media 파일 경로 설정

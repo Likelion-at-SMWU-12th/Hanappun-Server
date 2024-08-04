@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'reservation',
     'condition',
     'calendars',
+    'meal',
 
     # CORS
     'corsheaders',
