@@ -27,7 +27,7 @@ urlpatterns = [
     path('review/', include('review.urls')),
     path('reservation/', include('reservation.urls')),
     path('', include('condition.urls')),
-    path('', include('calendars.urls')),
+    path('calendars/', include('calendars.urls')),
     path('', include('meal.urls')),
 ] 
 
