@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 
+
 # 구성 요소 모델
 class AnimalProtein(models.Model):
     name = models.CharField(max_length=100)
