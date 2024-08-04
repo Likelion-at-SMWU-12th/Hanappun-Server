@@ -9,3 +9,9 @@ from clinic.models import Clinic
 class Reservation(models.Model):
     client = models.ForeignKey(to=User, on_delete=models.CASCADE, verbose_name='환자 아이디')
     date = models.DateTimeField(verbose_name="예약일정")
+
+    def to_json(self):
+        return {
+            "client": self.client.username,
+            "date": self.date.isoformat(),
+        }

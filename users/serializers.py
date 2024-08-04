@@ -66,6 +66,7 @@ class FriendsListSerializer(ModelSerializer):
 
 # minseo : 친구 삭제
 class DeleteFriendSerializer(Serializer):
+    my_username = CharField()
     friend_username = CharField()
 
     def validate_friend_username(self, value):

@@ -1,28 +1,24 @@
 from rest_framework import serializers
-from .models import User, Appointment, EatingHabit, ConditionStatus
+from .models import Event
 
-class UserSerializer(serializers.ModelSerializer):
+from condition.models import Condition
+
+# minseo : 컨디션 시리얼라이저
+class ConditionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'name']
+        model = Condition
+        fields = '__all__'
 
-class AppointmentSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+# minseo : 식단 기록 시리얼라이저
+# class MealSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = Appointment
-        fields = ['id', 'user', 'date', 'time', 'description']
+#     class Meta:
+#         model = 
+#         fields = '__all__'
 
-class EatingHabitSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-
-    class Meta:
-        model = EatingHabit
-        fields = ['id', 'user', 'date', 'total_evaluation']
-
-class ConditionStatusSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+# minseo : 이벤트 시리얼라이저
+class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = ConditionStatus
-        fields = ['id', 'user', 'date', 'status']
+        model = Event
+        fields = '__all__'

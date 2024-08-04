@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import get_calendar_events
+from .views import EventByDate
+
+app_name='calendars'
 
 urlpatterns = [
-    path('calendars/events/', get_calendar_events, name='calendar-events'),
+    path('event/<str:username>/<str:date>/', EventByDate.as_view(), name='reservations-by-date'),
 ]
