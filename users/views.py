@@ -117,9 +117,10 @@ class FriendsView(APIView):
             serializer = AcceptFriendRequestSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
                 friend_username = serializer.validated_data['friend_username']
-                user = request.user
+                my_username = serializer.validated_data['my_username']
                 try:
                     friend = User.objects.get(username=friend_username)
+                    user = User.objects.get(username=my_username)
                 except User.DoesNotExist:
                     return Response({"message": "사용자가 존재하지 않습니다.",}, status = status.HTTP_404_NOT_FOUND)
                 
