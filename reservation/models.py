@@ -12,6 +12,8 @@ class Reservation(models.Model):
 
     def to_json(self):
         return {
-            "client": self.client.username,
+            "reservation_id": self.id,
+            "client_username": self.client.username,
+            "client_my_clinic":self.client.my_clinic.name,
             "date": self.date.isoformat(),
         }
