@@ -18,7 +18,11 @@ class ConditionSerializer(serializers.ModelSerializer):
 
 # minseo : 이벤트 시리얼라이저
 class EventSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Event
         fields = ['date', 'user', 'appointment']  
+
+
+class MonthlyEventListSerializer(serializers.ModelSerializer):
+    is_condition_or_meal = serializers.BooleanField(default = False, allow_null=True)
+    is_reservation = serializers.BooleanField(default = False, allow_null=True)
