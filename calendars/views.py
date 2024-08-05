@@ -57,7 +57,7 @@ class EventByDate(APIView):
                 "message": "조회에 성공하였습니다.",
                 "result": {
                     **event_serializer.data,
-                    "condition": condition_serializer.data,
+                    "condition": condition_serializer,
                     # meal 시리얼라이저도 추가 필요
                 }
             }, status=status.HTTP_200_OK)
