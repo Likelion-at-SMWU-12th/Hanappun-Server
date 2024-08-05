@@ -1,12 +1,13 @@
 from django.http import JsonResponse
 from datetime import datetime, timedelta
+import random
 
 from users.models import User
 from reservation.models import Reservation
 from condition.models import Condition
 
 from .models import Event
-from .serializers import EventSerializer, ConditionSerializer, UserProfileSerializer
+from .serializers import EventSerializer, ConditionSerializer
 
 from rest_framework.views import APIView
 from rest_framework import status
@@ -123,6 +124,18 @@ class EventByMonth(APIView):
         except Exception as error:
             return JsonResponse({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
 
+# 체질별 주의 사항
+constitution_8_warning_message = {
+    "목양" : ["와인은 줄여요!", "오늘은 생선 어때요?"],
+    "목음" : ["몸을 따뜻하게 해요", "차가운 음식은 피해요"],
+    "토양" : ["매운 음식 주의!", "인삼은 몸에 맞지 않아요!"],
+    "토음" : ["항생제가 잘 맞지 않아요", "자극적인 음식은 줄여요"],
+    "금양" : ["바른 자세를 유지해요", "간이 약해요"],
+    "금음" : ["육식은 줄여요", "오늘은 생선 어때요?"],
+    "수양" : ["겉을 시원하게 해요", "따뜻한 차 한잔 어때요?"],
+    "수음" : ["차가운 음식은 안좋아요", "과식은 피해요"],    
+}
+
 class EventOfToday(APIView):
     def get(self, request, username, format=None):
         try:
@@ -160,11 +173,20 @@ class EventOfToday(APIView):
 
             event_serializer = EventSerializer(event)
 
+            constitution = user.constitution_8
+            if constitution in constitution_8_warning_message:
+                warn_messages = constitution_8_warning_message[constitution]
+                warn_message = random.choice(warn_messages)
+            else:
+                warn_message = ""
+
+
             return JsonResponse({
                 "message": "조회에 성공하였습니다.",
                 "result": {
                     **event_serializer.data,
-                    # "my_clinic_name" : serializer.data,
+                    "my_constitution_8" : user.constitution_8,
+                    "warn_message" : warn_message,
                     "friend_usernames": friend_nickname,
                     "condition": condition_serializer,
                     # meal 시리얼라이저도 추가 필요
