@@ -71,13 +71,46 @@ class MenuSerializer(serializers.ModelSerializer):
         model = Menu
         fields = ['menu_name', 'animal_protein', 'vegetable_protein', 'carbohydrate', 'root_vegetables', 'vegetables', 'herb', 'seaweed', 'fruit']
 
+    def create(self, validated_data):
+        animal_proteins = validated_data.pop('animal_protein', [])
+        vegetable_proteins = validated_data.pop('vegetable_protein', [])
+        carbohydrates = validated_data.pop('carbohydrate', [])
+        root_vegetables = validated_data.pop('root_vegetables', [])
+        vegetables = validated_data.pop('vegetables', [])
+        herbs = validated_data.pop('herb', [])
+        seaweeds = validated_data.pop('seaweed', [])
+        fruits = validated_data.pop('fruit', [])
+        
+        menu = Menu.objects.create(**validated_data)
+
+        menu.animal_protein.set([AnimalProtein.objects.get_or_create(name=item['name'])[0] for item in animal_proteins])
+        menu.vegetable_protein.set([VegetableProtein.objects.get_or_create(name=item['name'])[0] for item in vegetable_proteins])
+        menu.carbohydrate.set([Carbohydrate.objects.get_or_create(name=item['name'])[0] for item in carbohydrates])
+        menu.root_vegetables.set([RootVegetables.objects.get_or_create(name=item['name'])[0] for item in root_vegetables])
+        menu.vegetables.set([Vegetables.objects.get_or_create(name=item['name'])[0] for item in vegetables])
+        menu.herb.set([Herb.objects.get_or_create(name=item['name'])[0] for item in herbs])
+        menu.seaweed.set([Seaweed.objects.get_or_create(name=item['name'])[0] for item in seaweeds])
+        menu.fruit.set([Fruit.objects.get_or_create(name=item['name'])[0] for item in fruits])
+
+        return menu
+
 class MealSerializer(serializers.ModelSerializer):
     morning = MenuSerializer(many=True)
     lunch = MenuSerializer(many=True)
     dinner = MenuSerializer(many=True)
     snack = MenuSerializer(many=True)
     user = serializers.CharField(source='user.username')
+    morning_good_foods = serializers.ListField()
+    morning_bad_foods = serializers.ListField()
+    lunch_good_foods = serializers.ListField()
+    lunch_bad_foods = serializers.ListField()
+    dinner_good_foods = serializers.ListField()
+    dinner_bad_foods = serializers.ListField()
+    snack_good_foods = serializers.ListField()
+    snack_bad_foods = serializers.ListField()
 
     class Meta:
         model = Meal
-        fields = ['id', 'morning', 'lunch', 'dinner', 'snack', 'date', 'user']
+        fields = ['id', 'morning', 'lunch', 'dinner', 'snack', 'date', 'user', 'total_score', 'overall_status', 
+                  'morning_good_foods', 'morning_bad_foods', 'lunch_good_foods', 'lunch_bad_foods', 
+                  'dinner_good_foods', 'dinner_bad_foods', 'snack_good_foods', 'snack_bad_foods']

@@ -21,7 +21,7 @@ class Clinic(models.Model):
         ('8체질', '8체질'),
         ('한약 처방', '한약 처방'),
         ('사상체질', '사상체질'),
-        ('교통사고 전문', '교통사고 전문'),
+        ('교통사고', '교통사고'),
         ('침 치료', '침 치료'),
     )
     clinic_cate_1 = models.CharField("한의원 카테고리 1", choices=clinic_categories, max_length=50, blank=True)
