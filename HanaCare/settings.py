@@ -77,7 +77,7 @@ ROOT_URLCONF = 'HanaCare.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['FRONTEND'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -141,7 +141,7 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -149,3 +149,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT_DIR = os.path.dirname(BASE_DIR)
+
+STATICFILES_DIRS = [
+        # 실제 static 파일은 모두 client 측에서 소유
+        os.path.join(ROOT_DIR, 'FRONTEND/static')
+    ]
