@@ -17,12 +17,12 @@ class Clinic(models.Model):
     
     
     clinic_categories = (
-        ('HealthCare', '건강 관리'),
-        ('Constitution_8', '8체질'),
-        ('Herbal_prescription', '한약 처방'),
-        ('Sasang_constitution', '사상체질'),
-        ('Accident', '교통사고 전문'),
-        ('Acupuncture', '침 치료'),
+        ('건강 관리', '건강 관리'),
+        ('8체질', '8체질'),
+        ('한약 처방', '한약 처방'),
+        ('사상체질', '사상체질'),
+        ('교통사고 전문', '교통사고 전문'),
+        ('침 치료', '침 치료'),
     )
     clinic_cate_1 = models.CharField("한의원 카테고리 1", choices=clinic_categories, max_length=50, blank=True)
     clinic_cate_2 = models.CharField("한의원 카테고리 2", choices=clinic_categories, max_length=50, blank=True)

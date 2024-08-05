@@ -1,4 +1,6 @@
 from django.core.exceptions import ValidationError
+from datetime import datetime, timedelta
+import random
 
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.password_validation import validate_password
@@ -9,6 +11,7 @@ from rest_framework import status
 
 from .serializers import UserSerializer, UserProfileSerializer, AcceptFriendRequestSerializer, FriendsListSerializer, DeleteFriendSerializer
 from .models import User
+from reservation.models import Reservation
 
 # Create your views here.
 
@@ -176,3 +179,60 @@ class FriendsView(APIView):
                 return Response({"message": "이 사용자는 친구 목록에 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
         
         return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+# 체질별 주의 사항
+constitution_8_warning_message = {
+    "목양" : ["와인은 줄여요!", "오늘은 생선 어때요?"],
+    "목음" : ["몸을 따뜻하게 해요", "차가운 음식은 피해요"],
+    "토양" : ["매운 음식 주의!", "인삼은 몸에 맞지 않아요!"],
+    "토음" : ["항생제가 잘 맞지 않아요", "자극적인 음식은 줄여요"],
+    "금양" : ["바른 자세를 유지해요", "간이 약해요"],
+    "금음" : ["육식은 줄여요", "오늘은 생선 어때요?"],
+    "수양" : ["겉을 시원하게 해요", "따뜻한 차 한잔 어때요?"],
+    "수음" : ["차가운 음식은 안좋아요", "과식은 피해요"],    
+}
+
+# minseo : 친구 프로필 정보 불러오기
+# minseo : 친구 프로필 정보 불러오기
+class FriendsProfileView(APIView):
+    def get(self, request, username, format=None):
+        try:
+            # 오늘 날짜
+            date = datetime.today().date()
+
+            # 사용자 객체 가져오기
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                return Response({"message": "사용자가 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+            # 내일부터 가장 가까운 예약 정보 가져오기
+            closest_reservation = Reservation.objects.filter(client=user, date__date__gte=date).order_by('date').first()
+
+            if closest_reservation:
+                appointment_data = closest_reservation.to_json()
+                appointment_clinic = appointment_data.get('client_my_clinic') 
+                appointment_date = appointment_data.get('date')
+            else:
+                # 기본값 설정
+                appointment_clinic = None
+                appointment_date = None
+            
+            constitution = user.constitution_8
+            if constitution in constitution_8_warning_message:
+                warn_messages = constitution_8_warning_message[constitution]
+                warn_message = random.choice(warn_messages)
+            else:
+                warn_message = ""
+
+            return Response({
+                "message": "조회에 성공하였습니다.",
+                "result": {
+                    "con_8": constitution,
+                    "warn_message" : warn_message,
+                    "reservation_clinic": appointment_clinic,
+                    "reservation_datetime": appointment_date,
+                }
+            }, status=status.HTTP_200_OK)
+        except Exception as error:
+            return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)

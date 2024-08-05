@@ -11,6 +11,8 @@ urlpatterns=[
     path('quit/', views.QuitView.as_view(), name='quit_view'), # /users/quit/
     path('profile/', views.ProfileView.as_view(), name='profile_view'), # /users/profile/
     path('ourcare/', views.FriendsView.as_view(), name='ourcare_view'), # /users/ourcare/
+    path('ourcare/profile/<str:username>/', views.FriendsProfileView.as_view(), name='friend_profile'),
+
 
     path('admin', admin.site.urls),
 ]
