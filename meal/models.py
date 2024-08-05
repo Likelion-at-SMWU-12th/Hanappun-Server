@@ -1,8 +1,12 @@
 from django.db import models
 from users.models import User
 
+class BodyType(models.Model):
+    name = models.CharField(max_length=100)
 
-# 구성 요소 모델
+    def __str__(self):
+        return self.name
+
 class AnimalProtein(models.Model):
     name = models.CharField(max_length=100)
 
@@ -51,7 +55,6 @@ class Fruit(models.Model):
     def __str__(self):
         return self.name
 
-# 메뉴 모델
 class Menu(models.Model):
     menu_name = models.CharField(max_length=100)
     animal_protein = models.ManyToManyField(AnimalProtein, blank=True)
@@ -66,7 +69,6 @@ class Menu(models.Model):
     def __str__(self):
         return self.menu_name
 
-# 식사 기록 모델
 class Meal(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField()
@@ -77,3 +79,4 @@ class Meal(models.Model):
 
     def __str__(self):
         return f'{self.user} - {self.date}'
+
