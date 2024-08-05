@@ -6,7 +6,7 @@ from reservation.models import Reservation
 from condition.models import Condition
 
 from .models import Event
-from .serializers import EventSerializer, ConditionSerializer, MonthlyEventListSerializer
+from .serializers import EventSerializer, ConditionSerializer, UserProfileSerializer
 
 from rest_framework.views import APIView
 from rest_framework import status
@@ -38,8 +38,11 @@ class EventByDate(APIView):
             # 시리얼라이저
 
             # 해당일의 컨디션 정보
-            condition = Condition.objects.filter(user=user, date=date).first()
-            condition_serializer = ConditionSerializer(condition)
+            try:
+                condition = Condition.objects.get(user=user, date=date)
+                condition_serializer = ConditionSerializer(condition).data
+            except Condition.DoesNotExist:
+                condition_serializer = None
 
             # 시리얼라이져에 적용
             event = Event(
@@ -119,3 +122,53 @@ class EventByMonth(APIView):
             }, status=status.HTTP_200_OK)
         except Exception as error:
             return JsonResponse({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
+
+class EventOfToday(APIView):
+    def get(self, request, username, format=None):
+        try:
+            # 오늘 날짜
+            date = datetime.today().date()
+
+            # 사용자 객체 가져오기
+            user = User.objects.get(username=username)
+            # serializer = UserProfileSerializer(user)
+
+            # 내일부터 가장 가까운 예약 정보 가져오기
+            closest_reservation = Reservation.objects.filter(client=user, date__date__gte=date).order_by('date').first()
+
+            if closest_reservation:
+                appointment_data = closest_reservation.to_json()
+            else:
+                appointment_data = []
+
+            # 해당일의 컨디션 정보
+            try:
+                condition = Condition.objects.get(user=user, date=date)
+                condition_serializer = ConditionSerializer(condition).data
+            except Condition.DoesNotExist:
+                condition_serializer = None
+
+            # 친구 목록
+            friend_nickname = list(user.friends.values_list('nickname', flat=True))
+
+            # 시리얼라이져에 적용
+            event = Event(
+                date=date,
+                user=user,
+                appointment=appointment_data,
+            )
+
+            event_serializer = EventSerializer(event)
+
+            return JsonResponse({
+                "message": "조회에 성공하였습니다.",
+                "result": {
+                    **event_serializer.data,
+                    # "my_clinic_name" : serializer.data,
+                    "friend_usernames": friend_nickname,
+                    "condition": condition_serializer,
+                    # meal 시리얼라이저도 추가 필요
+                }
+            }, status=status.HTTP_200_OK)
+        except Exception as error:
+            return JsonResponse({"11message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
