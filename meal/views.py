@@ -129,11 +129,14 @@ def calculate_score(body_type, components):
     score = 0
     scores = component_scores[body_type]
     for component in components:
-        for score_value, items in scores.items():
-            if component in items:
-                score += int(score_value)
-                break
+        component_name = component.get('name')  # Extract the 'name' value from the dictionary
+        if component_name:
+            for score_value, items in scores.items():
+                if component_name in items:
+                    score += int(score_value)
+                    break
     return score
+
 
 class MealAPIView(APIView):
     permission_classes = [AllowAny]
@@ -165,6 +168,10 @@ class MealAPIView(APIView):
             user = User.objects.get(username=user_username)
         except User.DoesNotExist:
             return Response({"message": "사용자가 존재하지 않습니다.",}, status = status.HTTP_404_NOT_FOUND)
+        
+        if not user.constitution_8:
+            return Response({"message": "체질 정보가 존재하지 않습니다.",}, status = status.HTTP_404_NOT_FOUND)
+
     
         meal = Meal.objects.create(user=user, date=date)
 
@@ -179,19 +186,20 @@ class MealAPIView(APIView):
             'snack': {'좋은 음식': [], '나쁜 음식': []}
         }
 
-        response_data = {
-            "username": user_username,
-            "constitution_8": user.constitution_8,
-            "date": meal.date,
-            "morning": [],
-            "lunch": [],
-            "dinner": [],
-            "snack": []
-        }
+        # response_data = {
+        #     "username": user_username,
+        #     "constitution_8": user.constitution_8,
+        #     "date": meal.date,
+        #     "morning": [],
+        #     "lunch": [],
+        #     "dinner": [],
+        #     "snack": []
+        # }
 
         for meal_time in ['morning', 'lunch', 'dinner', 'snack']:
             if meal_time in data:
                 menus = []
+                # 유효한 입력 형식인지 시리얼라이저로 확인
                 for menu_data in data[meal_time]:
                     menu_serializer = MenuSerializer(data=menu_data)
                     if menu_serializer.is_valid():
@@ -234,11 +242,6 @@ class MealAPIView(APIView):
         response_data['overall_status'] = overall_status
 
         return Response({"message": "식사 기록이 생성되었습니다.", "data": response_data}, status=status.HTTP_201_CREATED)
-
-
-
-
-
 
 
     def put(self, request):
