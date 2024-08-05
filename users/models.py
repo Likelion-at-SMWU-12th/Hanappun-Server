@@ -36,14 +36,14 @@ class User(AbstractUser):
     friends = models.ManyToManyField("self", symmetrical=False, related_name='friends_set', blank=True)
 
     constitution_8_categories = (
-        ('Hepatonia', '목양'),
-        ('Cholecystonia', '목음'),
-        ('Renotonia', '수양'),
-        ('Vesicotonia', '수음'),
-        ('Pulmotonia', '금양'),
-        ('Colonotonia', '금음'),
-        ('Pancreotonia', '토양'),
-        ('Gastrotonia', '토음')
+        ('목양', '목양'),
+        ('목음', '목음'),
+        ('수양', '수양'),
+        ('수음', '수음'),
+        ('금양', '금양'),
+        ('금음', '금음'),
+        ('토양', '토양'),
+        ('토음', '토음')
     )
     constitution_8 = models.CharField("8체질", choices=constitution_8_categories, max_length=50, blank=True)
     my_clinic = models.ForeignKey(Clinic, verbose_name="나의 한의원", on_delete=models.SET_NULL, blank=True, null=True)

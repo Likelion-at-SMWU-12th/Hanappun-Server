@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Event
 
 from condition.models import Condition
+from users.models import User
 
 # minseo : 컨디션 시리얼라이저
 class ConditionSerializer(serializers.ModelSerializer):
@@ -22,7 +23,12 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = ['date', 'user', 'appointment']  
 
+# minseo : 오늘의 이벤트
+class TodayEventSerializer(serializers.ModelSerializer):
+    pass
 
-class MonthlyEventListSerializer(serializers.ModelSerializer):
-    is_condition_or_meal = serializers.BooleanField(default = False, allow_null=True)
-    is_reservation = serializers.BooleanField(default = False, allow_null=True)
+# minseo : 프로필 조회, 수정에 사용
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("username", "friends", "constitution_8", "my_clinic")
