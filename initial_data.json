@@ -31,14 +31,14 @@
         "model": "meal.animalprotein",
         "pk": 5,
         "fields": {
-            "name": "염소고기"
+            "name": "우유"
         }
     },
     {
         "model": "meal.animalprotein",
         "pk": 6,
         "fields": {
-            "name": "우유/유제품"
+            "name": "유제품"
         }
     },
     {
@@ -59,70 +59,63 @@
         "model": "meal.animalprotein",
         "pk": 9,
         "fields": {
-            "name": "계란노른자"
+            "name": "바다생선"
         }
     },
     {
         "model": "meal.animalprotein",
         "pk": 10,
         "fields": {
-            "name": "계란흰자"
+            "name": "민물생선"
         }
     },
     {
         "model": "meal.animalprotein",
         "pk": 11,
         "fields": {
-            "name": "바다생선"
+            "name": "조개류"
         }
     },
     {
         "model": "meal.animalprotein",
         "pk": 12,
         "fields": {
-            "name": "민물생선"
+            "name": "굴"
         }
     },
     {
         "model": "meal.animalprotein",
         "pk": 13,
         "fields": {
-            "name": "조개류"
+            "name": "갑각류"
         }
     },
     {
         "model": "meal.animalprotein",
         "pk": 14,
         "fields": {
-            "name": "굴"
+            "name": "흰살생선"
         }
     },
     {
         "model": "meal.animalprotein",
         "pk": 15,
         "fields": {
-            "name": "새우/게(갑각류)"
+            "name": "붉은살생선"
         }
     },
     {
         "model": "meal.animalprotein",
         "pk": 16,
         "fields": {
-            "name": "흰살생선"
+            "name": "복어"
         }
     },
     {
         "model": "meal.animalprotein",
         "pk": 17,
         "fields": {
-            "name": "붉은살생선"
-        }
-    },
-    {
-        "model": "meal.animalprotein",
-        "pk": 18,
-        "fields": {
-            "name": "복어"
+            "name": "녹용"
         }
     },
     {
@@ -136,96 +129,47 @@
         "model": "meal.vegetableprotein",
         "pk": 2,
         "fields": {
-            "name": "메주"
+            "name": "팥"
         }
     },
     {
         "model": "meal.vegetableprotein",
         "pk": 3,
         "fields": {
-            "name": "완두콩"
+            "name": "밤"
         }
     },
     {
         "model": "meal.vegetableprotein",
         "pk": 4,
         "fields": {
-            "name": "강낭콩"
+            "name": "청국장"
         }
     },
     {
         "model": "meal.vegetableprotein",
         "pk": 5,
         "fields": {
-            "name": "팥"
+            "name": "견과류"
         }
     },
     {
         "model": "meal.vegetableprotein",
         "pk": 6,
         "fields": {
-            "name": "청국장"
+            "name": "도토리"
         }
     },
     {
         "model": "meal.vegetableprotein",
         "pk": 7,
         "fields": {
-            "name": "견과류"
-        }
-    },
-    {
-        "model": "meal.vegetableprotein",
-        "pk": 8,
-        "fields": {
-            "name": "견과류"
-        }
-    },
-    {
-        "model": "meal.vegetableprotein",
-        "pk": 9,
-        "fields": {
-            "name": "은행"
-        }
-    },
-    {
-        "model": "meal.vegetableprotein",
-        "pk": 10,
-        "fields": {
-            "name": "호두"
-        }
-    },
-    {
-        "model": "meal.vegetableprotein",
-        "pk": 11,
-        "fields": {
-            "name": "잣/해바라기씨"
-        }
-    },
-    {
-        "model": "meal.vegetableprotein",
-        "pk": 12,
-        "fields": {
-            "name": "도토리"
-        }
-    },
-    {
-        "model": "meal.vegetableprotein",
-        "pk": 13,
-        "fields": {
             "name": "된장"
         }
     },
     {
         "model": "meal.vegetableprotein",
-        "pk": 14,
-        "fields": {
-            "name": "두유"
-        }
-    },
-    {
-        "model": "meal.vegetableprotein",
-        "pk": 15,
+        "pk": 8,
         "fields": {
             "name": "두부"
         }
@@ -234,7 +178,7 @@
         "model": "meal.carbohydrate",
         "pk": 1,
         "fields": {
-            "name": "쌀(백미)"
+            "name": "백미"
         }
     },
     {
@@ -283,112 +227,98 @@
         "model": "meal.rootvegetables",
         "pk": 1,
         "fields": {
-            "name": "뿌리채소"
-        }
-    },
-    {
-        "model": "meal.rootvegetables",
-        "pk": 2,
-        "fields": {
             "name": "감자"
         }
     },
     {
         "model": "meal.rootvegetables",
-        "pk": 3,
+        "pk": 2,
         "fields": {
             "name": "고구마"
         }
     },
     {
         "model": "meal.rootvegetables",
-        "pk": 4,
+        "pk": 3,
         "fields": {
             "name": "생강"
         }
     },
     {
         "model": "meal.rootvegetables",
-        "pk": 5,
+        "pk": 4,
         "fields": {
             "name": "도라지"
         }
     },
     {
         "model": "meal.rootvegetables",
-        "pk": 6,
+        "pk": 5,
         "fields": {
-            "name": "더덕"
-        }
-    },
-    {
-        "model": "meal.rootvegetables",
-        "pk": 7,
-        "fields": {
-            "name": "우엉"
-        }
-    },
-    {
-        "model": "meal.rootvegetables",
-        "pk": 8,
-        "fields": {
-            "name": "산삼/인삼(홍삼)"
+            "name": "마"
         }
     },
     {
         "model": "meal.vegetables",
         "pk": 1,
         "fields": {
-            "name": "푸른잎채소"
+            "name": "배추"
         }
     },
     {
         "model": "meal.vegetables",
         "pk": 2,
         "fields": {
-            "name": "오이"
+            "name": "상추"
         }
     },
     {
         "model": "meal.vegetables",
         "pk": 3,
         "fields": {
-            "name": "호박"
+            "name": "깻잎"
         }
     },
     {
         "model": "meal.vegetables",
         "pk": 4,
         "fields": {
-            "name": "애호박"
+            "name": "오이"
         }
     },
     {
         "model": "meal.vegetables",
         "pk": 5,
         "fields": {
-            "name": "가지"
+            "name": "호박"
         }
     },
     {
         "model": "meal.vegetables",
         "pk": 6,
         "fields": {
-            "name": "토마토"
+            "name": "가지"
         }
     },
     {
         "model": "meal.vegetables",
         "pk": 7,
         "fields": {
-            "name": "아보카도"
+            "name": "토마토"
         }
     },
     {
         "model": "meal.vegetables",
         "pk": 8,
         "fields": {
-            "name": "버섯"
+            "name": "시금치"
+        }
+    },
+    {
+        "model": "meal.vegetables",
+        "pk": 9,
+        "fields": {
+            "name": "아보카도"
         }
     },
     {
@@ -402,26 +332,19 @@
         "model": "meal.herb",
         "pk": 2,
         "fields": {
-            "name": "열성향신료"
+            "name": "마늘"
         }
     },
     {
         "model": "meal.herb",
         "pk": 3,
         "fields": {
-            "name": "마늘"
+            "name": "참기름"
         }
     },
     {
         "model": "meal.herb",
         "pk": 4,
-        "fields": {
-            "name": "설탕"
-        }
-    },
-    {
-        "model": "meal.herb",
-        "pk": 5,
         "fields": {
             "name": "꿀"
         }
@@ -437,13 +360,6 @@
         "model": "meal.seaweed",
         "pk": 2,
         "fields": {
-            "name": "다시마"
-        }
-    },
-    {
-        "model": "meal.seaweed",
-        "pk": 3,
-        "fields": {
             "name": "김"
         }
     },
@@ -451,21 +367,21 @@
         "model": "meal.fruit",
         "pk": 1,
         "fields": {
-            "name": "사과"
+            "name": "와인"
         }
     },
     {
         "model": "meal.fruit",
         "pk": 2,
         "fields": {
-            "name": "배"
+            "name": "알로에"
         }
     },
     {
         "model": "meal.fruit",
         "pk": 3,
         "fields": {
-            "name": "시트러스류"
+            "name": "사과"
         }
     },
     {
@@ -479,42 +395,42 @@
         "model": "meal.fruit",
         "pk": 5,
         "fields": {
-            "name": "수박/멜론"
+            "name": "수박"
         }
     },
     {
         "model": "meal.fruit",
         "pk": 6,
         "fields": {
-            "name": "포도"
+            "name": "청포도"
         }
     },
     {
         "model": "meal.fruit",
         "pk": 7,
         "fields": {
-            "name": "청포도"
+            "name": "참외"
         }
     },
     {
         "model": "meal.fruit",
         "pk": 8,
         "fields": {
-            "name": "참외"
+            "name": "딸기"
         }
     },
     {
         "model": "meal.fruit",
         "pk": 9,
         "fields": {
-            "name": "딸기"
+            "name": "모과"
         }
     },
     {
         "model": "meal.fruit",
         "pk": 10,
         "fields": {
-            "name": "바나나"
+            "name": "복분자"
         }
     },
     {
@@ -525,31 +441,59 @@
         }
     },
     {
-        "model": "meal.fruit",
-        "pk": 12,
+        "model": "meal.constitution_8",
+        "pk": 1,
         "fields": {
-            "name": "복숭아/자두"
+            "name": "목양"
         }
     },
     {
-        "model": "meal.fruit",
-        "pk": 13,
+        "model": "meal.constitution_8",
+        "pk": 2,
         "fields": {
-            "name": "체리/앵두/살구"
+            "name": "목음"
         }
     },
     {
-        "model": "meal.fruit",
-        "pk": 14,
+        "model": "meal.constitution_8",
+        "pk": 3,
         "fields": {
-            "name": "코코넛"
+            "name": "토양"
         }
     },
     {
-        "model": "meal.fruit",
-        "pk": 15,
+        "model": "meal.constitution_8",
+        "pk": 4,
         "fields": {
-            "name": "리치"
+            "name": "토음"
+        }
+    },
+    {
+        "model": "meal.constitution_8",
+        "pk": 5,
+        "fields": {
+            "name": "금양"
+        }
+    },
+    {
+        "model": "meal.constitution_8",
+        "pk": 6,
+        "fields": {
+            "name": "금음"
+        }
+    },
+    {
+        "model": "meal.constitution_8",
+        "pk": 7,
+        "fields": {
+            "name": "수양"
+        }
+    },
+    {
+        "model": "meal.constitution_8",
+        "pk": 8,
+        "fields": {
+            "name": "수음"
         }
     }
 ]
