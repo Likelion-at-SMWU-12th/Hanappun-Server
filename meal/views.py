@@ -222,13 +222,9 @@ class MealAPIView(APIView):
         response_data.update(classified_meals)
 
         return Response({"message": "식사 기록이 생성되었습니다.", "data": response_data}, status=status.HTTP_201_CREATED)
-
+    
     def put(self, request):
         date = request.data.get('date')
-        meals = Meal.objects.filter(date=date)
-        if not meals.exists():
-            return Response({"message": "해당 날짜에 대한 식사 기록이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
-
         user_username = request.data.get('username')
         user = get_object_or_404(User, username=user_username)
 
@@ -240,7 +236,6 @@ class MealAPIView(APIView):
         for meal in meals:
             meal.user = user
             meal.save()
-
         total_score = 0
         classified_meals = {
             'morning': {'좋은 음식': [], '나쁜 음식': []},
@@ -249,30 +244,23 @@ class MealAPIView(APIView):
             'snack': {'좋은 음식': [], '나쁜 음식': []}
         }
 
-        response_data = {
-            "username": user.username,
-            "constitution_8": user.constitution_8,
-            "date": date,
-            "morning": [],
-            "lunch": [],
-            "dinner": [],
-            "snack": []
-        }
-
         for meal in meals:
             for meal_time in ['morning', 'lunch', 'dinner', 'snack']:
-                if meal_time in data:
+                if meal_time in request.data:
                     menus = []
-                    for menu_data in data[meal_time]:
-                        menu = create_menu(menu_data)
-                        menus.append(menu)
-                        serialized_menu = MenuSerializer(menu).data
-                        response_data[meal_time].append(serialized_menu)
+                    for menu_data in request.data[meal_time]:
+                        menu_serializer = MenuSerializer(data=menu_data)
+                        if menu_serializer.is_valid():
+                            menu = menu_serializer.save()
+                            menus.append(menu)
+                        else:
+                            return Response(menu_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                     getattr(meal, meal_time).set(menus)
 
                     for menu_data in data[meal_time]:
                         components = menu_data.get('animal_protein', []) + menu_data.get('vegetable_protein', []) + menu_data.get('carbohydrate', []) + menu_data.get('root_vegetables', []) + menu_data.get('vegetables', []) + menu_data.get('herb', []) + menu_data.get('seaweed', []) + menu_data.get('fruit', [])
                         score = calculate_score(constitution_8, components)
+
                         total_score += score
                         if score >= 0:
                             classified_meals[meal_time]['좋은 음식'].append(menu_data['menu_name'])
@@ -297,6 +285,7 @@ class MealAPIView(APIView):
                 meal.overall_status = "good"
 
             meal.save()
+
 
         response_data.update(classified_meals)
 
