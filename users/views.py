@@ -141,8 +141,20 @@ class FriendsView(APIView):
             return Response({"message": "사용자를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
         
         serializer = FriendsListSerializer(user)
+
+        friends_usernames = serializer.data.get('friends', [])  # Get the list of friends usernames or default to an empty list
+
+        data = []
+        for friends_username in friends_usernames:
+            try:
+                friend = User.objects.get(username=friends_username)
+                data.append({friends_username: friend.nickname})
+            except User.DoesNotExist:
+                # Handle the case where the user does not exist, if necessary
+                pass
+
         return Response({"message": "조회에 성공하였습니다.",
-                        "result": serializer.data}, status=status.HTTP_200_OK)
+                        "result": data}, status=status.HTTP_200_OK)
 
     
     def delete(self, request):
