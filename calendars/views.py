@@ -185,6 +185,7 @@ class EventOfToday(APIView):
                 "message": "조회에 성공하였습니다.",
                 "result": {
                     **event_serializer.data,
+                    "nickname" : user.nickname,
                     "my_constitution_8" : user.constitution_8,
                     "warn_message" : warn_message,
                     "friend_usernames": friend_nickname,
