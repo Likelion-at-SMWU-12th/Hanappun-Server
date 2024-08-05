@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-x9p2q0q4b!@q@gsiqpy$x1c%739$bb$x5y&w$qsw99pk+5aa9@
 # SECURITY WARNING: don't run with debug turned on in production!
 
 # 최종 배포시에는 DEBUG = False로 변경 필요
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
@@ -77,7 +77,7 @@ ROOT_URLCONF = 'HanaCare.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['FRONTEND'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -141,7 +141,7 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -149,3 +149,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT_DIR = os.path.dirname(BASE_DIR)
+
+STATICFILES_DIRS = [
+        # 실제 static 파일은 모두 client 측에서 소유
+        os.path.join(ROOT_DIR, 'FRONTEND/static')
+    ]
