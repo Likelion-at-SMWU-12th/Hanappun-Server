@@ -186,6 +186,7 @@ class EventOfToday(APIView):
                 "result": {
                     **event_serializer.data,
                     "nickname" : user.nickname,
+                    "my_clinic": user.my_clinic.name,
                     "my_constitution_8" : user.constitution_8,
                     "warn_message" : warn_message,
                     "friend_usernames": friend_nickname,
