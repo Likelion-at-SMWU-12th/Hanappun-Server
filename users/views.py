@@ -192,8 +192,6 @@ constitution_8_warning_message = {
     "수음" : ["차가운 음식은 NO!", "과식은 피해요"],    
 }
 
-
-# minseo : 친구 프로필 정보 불러오기
 # minseo : 친구 프로필 정보 불러오기
 class FriendsProfileView(APIView):
     def get(self, request, username, format=None):

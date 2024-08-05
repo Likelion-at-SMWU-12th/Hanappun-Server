@@ -63,8 +63,8 @@ class ConditionDeleteView(APIView):
 class ConditionByDateView(APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, date):
-        conditions = Condition.objects.filter(date=date)
+    def get(self, request, username, date):
+        conditions = Condition.objects.filter(date=date, user=username)
         serializer = ConditionSerializer(conditions, many=True)
         return Response({"message": "특정 날짜의 컨디션 기록 조회 성공", "data": serializer.data}, status=status.HTTP_200_OK)
     
