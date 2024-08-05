@@ -187,11 +187,11 @@ class MealAPIView(APIView):
 
                 for menu_data in data[meal_time]:
                     components = menu_data.get('animal_protein', []) + \
-                                 menu_data.get('vegetable_protein', []) + \
-                                 menu_data.get('carbohydrate', []) + \
-                                 menu_data.get('root_vegetables', []) + \
-                                 menu_data.get('vegetables', []) + menu_data.get('herb', []) + \
-                                 menu_data.get('seaweed', []) + menu_data.get('fruit', [])
+                                menu_data.get('vegetable_protein', []) + \
+                                menu_data.get('carbohydrate', []) + \
+                                menu_data.get('root_vegetables', []) + \
+                                menu_data.get('vegetables', []) + menu_data.get('herb', []) + \
+                                menu_data.get('seaweed', []) + menu_data.get('fruit', [])
                     score = calculate_score(user.constitution_8, components)
                     total_score += score
                     if score >= 0:
