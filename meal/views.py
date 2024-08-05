@@ -156,7 +156,6 @@ class MealAPIView(APIView):
     
     def post(self, request):
         user_username = request.data.get('username')
-        # constitution_8 = request.data.get('constitution_8')
         date = request.data.get('date')
         
         if not user_username or not date:
@@ -166,13 +165,11 @@ class MealAPIView(APIView):
             user = User.objects.get(username=user_username)
         except User.DoesNotExist:
             return Response({"message": "사용자가 존재하지 않습니다.",}, status = status.HTTP_404_NOT_FOUND)
-        
-        # user.save()
-        
+    
+        meal = Meal.objects.create(user=user, date=date)
+
         data = request.data.copy()
         data['user'] = user
-    
-        meal = Meal.objects.create(user=user, date=data['date'])
         
         total_score = 0
         classified_meals = {
@@ -183,7 +180,7 @@ class MealAPIView(APIView):
         }
 
         response_data = {
-            "username": user.username,
+            "username": user_username,
             "constitution_8": user.constitution_8,
             "date": meal.date,
             "morning": [],
@@ -196,15 +193,23 @@ class MealAPIView(APIView):
             if meal_time in data:
                 menus = []
                 for menu_data in data[meal_time]:
-                    menu = create_menu(menu_data)
-                    menus.append(menu)
-                    serialized_menu = MenuSerializer(menu).data
-                    response_data[meal_time].append(serialized_menu)
+                    menu_serializer = MenuSerializer(data=menu_data)
+                    if menu_serializer.is_valid():
+                        menu = menu_serializer.save()
+                        menus.append(menu)
+                    else:
+                        return Response(menu_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 getattr(meal, meal_time).set(menus)
+
 
                 # 체질에 따른 음식 점수 계산 및 분류
                 for menu_data in data[meal_time]:
-                    components = menu_data.get('animal_protein', []) + menu_data.get('vegetable_protein', []) + menu_data.get('carbohydrate', []) + menu_data.get('root_vegetables', []) + menu_data.get('vegetables', []) + menu_data.get('herb', []) + menu_data.get('seaweed', []) + menu_data.get('fruit', [])
+                    components = menu_data.get('animal_protein', []) + \
+                        menu_data.get('vegetable_protein', []) + \
+                            menu_data.get('carbohydrate', []) + \
+                                menu_data.get('root_vegetables', []) + \
+                                    menu_data.get('vegetables', []) + menu_data.get('herb', []) + \
+                                            menu_data.get('seaweed', []) + menu_data.get('fruit', [])
                     score = calculate_score(user.constitution_8, components)
                     total_score += score
                     if score >= 0:
@@ -213,6 +218,9 @@ class MealAPIView(APIView):
                         classified_meals[meal_time]['나쁜 음식'].append(menu_data['menu_name'])
 
         meal.save()
+
+        response_data = MealSerializer(meal).data
+
 
         # 전체 점수에 따른 상태 분류
         if total_score < 0:
@@ -226,6 +234,12 @@ class MealAPIView(APIView):
         response_data['overall_status'] = overall_status
 
         return Response({"message": "식사 기록이 생성되었습니다.", "data": response_data}, status=status.HTTP_201_CREATED)
+
+
+
+
+
+
 
     def put(self, request):
         date = request.data.get('date')
