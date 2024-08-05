@@ -5,9 +5,12 @@ import random
 from users.models import User
 from reservation.models import Reservation
 from condition.models import Condition
+from meal.models import Meal
 
 from .models import Event
 from .serializers import EventSerializer, ConditionSerializer
+
+from meal.serializers import MealSerializer
 
 from rest_framework.views import APIView
 from rest_framework import status
@@ -34,9 +37,12 @@ class EventByDate(APIView):
                 friend_reservations = Reservation.objects.filter(client__username=friend_username, date__date=date)
                 appointment_data.extend([reservation.to_json() for reservation in friend_reservations])
 
-            # 해당일의 식사 정보
-            # meals = Meal.objects.filter(user=user, date=date)
-            # 시리얼라이저
+            # 해당일의 식단 정보
+            try:
+                meal = Meal.objects.get(user=user, date=date)
+                meal_serializer = MealSerializer(meal).data
+            except Meal.DoesNotExist:
+                meal_serializer = None
 
             # 해당일의 컨디션 정보
             try:
@@ -59,7 +65,7 @@ class EventByDate(APIView):
                 "result": {
                     **event_serializer.data,
                     "condition": condition_serializer,
-                    # meal 시리얼라이저도 추가 필요
+                    "meal": meal_serializer
                 }
             }, status=status.HTTP_200_OK)
         except Exception as error:
@@ -100,14 +106,13 @@ class EventByMonth(APIView):
                             is_reservation =True
                             break
                         
-                # 컨디션 기록이 있는지 확인
-                is_condition_or_meal = False
-                condition = Condition.objects.filter(user=user, date=current_date).first()
-                if condition != None:
-                    # meal 기록이 있는지 확인   
-                    # if meal 있으면 
-                        # is_condition_or_meal = True
-                    is_condition_or_meal = True
+                # 컨디션 및 meal 기록이 있는지 확인
+                condition_exists = Condition.objects.filter(user=user, date=current_date).exists()
+                meal_exists = Meal.objects.filter(user=user, date=current_date).exists()
+
+                # 상태 기록 또는 meal 기록이 존재하는 경우
+                is_condition_or_meal = condition_exists or meal_exists
+
 
                 # response_data에 데이터 추가
                 response_data.append({
@@ -161,6 +166,14 @@ class EventOfToday(APIView):
             except Condition.DoesNotExist:
                 condition_serializer = None
 
+            # 해당일의 식단 정보
+            try:
+                meal = Meal.objects.get(user=user, date=date)
+                meal_serializer = MealSerializer(meal).data
+            except Meal.DoesNotExist:
+                meal_serializer = None
+
+
             # 친구 목록
             friend_nickname = list(user.friends.values_list('nickname', flat=True))
 
@@ -196,7 +209,7 @@ class EventOfToday(APIView):
                     "warn_message" : warn_message,
                     "friend_usernames": friend_nickname,
                     "condition": condition_serializer,
-                    # meal 시리얼라이저도 추가 필요
+                    "meal" : meal_serializer
                 }
             }, status=status.HTTP_200_OK)
         except Exception as error:
