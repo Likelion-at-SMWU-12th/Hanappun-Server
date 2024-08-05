@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Clinic, ClinicImage
+from .models import Clinic
 
 # Register your models here.
 
@@ -8,6 +8,6 @@ from .models import Clinic, ClinicImage
 class PostModelAdmin(admin.ModelAdmin):
     pass # 빈 클래스
 
-@admin.register(ClinicImage) 
-class PostModelAdmin(admin.ModelAdmin):
-    pass # 빈 클래스
+# @admin.register(ClinicImage) 
+# class PostModelAdmin(admin.ModelAdmin):
+#     pass # 빈 클래스
