@@ -152,4 +152,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
-STATICFILES_DIRS = "/home/ec2-user/Hanappun-Server/FRONTEND/build/static"
+STATICFILES_DIRS = [
+    "/home/ec2-user/Hanappun-Server/FRONTEND/build/static",
+]
