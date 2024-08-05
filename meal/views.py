@@ -129,10 +129,12 @@ def calculate_score(body_type, components):
     score = 0
     scores = component_scores[body_type]
     for component in components:
-        for score_value, items in scores.items():
-            if component in items:
-                score += int(score_value)
-                break
+        component_name = component.get('name')  # Extract the 'name' value from the dictionary
+        if component_name:
+            for score_value, items in scores.items():
+                if component_name in items:
+                    score += int(score_value)
+                    break
     return score
 
 class MealAPIView(APIView):
@@ -143,37 +145,26 @@ class MealAPIView(APIView):
         serializer = MealSerializer(meals, many=True)
         return Response({"message": "식사 기록 조회 성공", "data": serializer.data}, status=status.HTTP_200_OK)
 
-        # if date:
-        #     meals = Meal.objects.filter(date=date)
-        #     if not meals.exists():
-        #         return Response({"message": "해당 날짜에 대한 식사 기록이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
-        #     serializer = MealSerializer(meals, many=True)
-        #     return Response({"message": "특정 날짜의 식사 기록 조회 성공", "data": serializer.data}, status=status.HTTP_200_OK)
-        # else:
-        #     meals = Meal.objects.all()
-        #     serializer = MealSerializer(meals, many=True)
-        #     return Response({"message": "식사 기록 조회 성공", "data": serializer.data}, status=status.HTTP_200_OK)
-    
     def post(self, request):
         user_username = request.data.get('username')
-        # constitution_8 = request.data.get('constitution_8')
         date = request.data.get('date')
-        
+
         if not user_username or not date:
             return Response({"message": "username, date는 필수 항목입니다."}, status=status.HTTP_400_BAD_REQUEST)
-            
+
         try:
             user = User.objects.get(username=user_username)
         except User.DoesNotExist:
-            return Response({"message": "사용자가 존재하지 않습니다.",}, status = status.HTTP_404_NOT_FOUND)
-        
-        # user.save()
-        
+            return Response({"message": "사용자가 존재하지 않습니다.",}, status=status.HTTP_404_NOT_FOUND)
+
+        if not user.constitution_8:
+            return Response({"message": "체질 정보가 존재하지 않습니다.",}, status=status.HTTP_404_NOT_FOUND)
+
+        meal = Meal.objects.create(user=user, date=date)
+
         data = request.data.copy()
         data['user'] = user
-    
-        meal = Meal.objects.create(user=user, date=data['date'])
-        
+
         total_score = 0
         classified_meals = {
             'morning': {'좋은 음식': [], '나쁜 음식': []},
@@ -182,29 +173,25 @@ class MealAPIView(APIView):
             'snack': {'좋은 음식': [], '나쁜 음식': []}
         }
 
-        response_data = {
-            "username": user.username,
-            "constitution_8": user.constitution_8,
-            "date": meal.date,
-            "morning": [],
-            "lunch": [],
-            "dinner": [],
-            "snack": []
-        }
-
         for meal_time in ['morning', 'lunch', 'dinner', 'snack']:
             if meal_time in data:
                 menus = []
                 for menu_data in data[meal_time]:
-                    menu = create_menu(menu_data)
-                    menus.append(menu)
-                    serialized_menu = MenuSerializer(menu).data
-                    response_data[meal_time].append(serialized_menu)
+                    menu_serializer = MenuSerializer(data=menu_data)
+                    if menu_serializer.is_valid():
+                        menu = menu_serializer.save()
+                        menus.append(menu)
+                    else:
+                        return Response(menu_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 getattr(meal, meal_time).set(menus)
 
-                # 체질에 따른 음식 점수 계산 및 분류
                 for menu_data in data[meal_time]:
-                    components = menu_data.get('animal_protein', []) + menu_data.get('vegetable_protein', []) + menu_data.get('carbohydrate', []) + menu_data.get('root_vegetables', []) + menu_data.get('vegetables', []) + menu_data.get('herb', []) + menu_data.get('seaweed', []) + menu_data.get('fruit', [])
+                    components = menu_data.get('animal_protein', []) + \
+                                 menu_data.get('vegetable_protein', []) + \
+                                 menu_data.get('carbohydrate', []) + \
+                                 menu_data.get('root_vegetables', []) + \
+                                 menu_data.get('vegetables', []) + menu_data.get('herb', []) + \
+                                 menu_data.get('seaweed', []) + menu_data.get('fruit', [])
                     score = calculate_score(user.constitution_8, components)
                     total_score += score
                     if score >= 0:
@@ -212,38 +199,38 @@ class MealAPIView(APIView):
                     else:
                         classified_meals[meal_time]['나쁜 음식'].append(menu_data['menu_name'])
 
+        meal.total_score = total_score
+        meal.morning_good_foods = classified_meals['morning']['좋은 음식']
+        meal.morning_bad_foods = classified_meals['morning']['나쁜 음식']
+        meal.lunch_good_foods = classified_meals['lunch']['좋은 음식']
+        meal.lunch_bad_foods = classified_meals['lunch']['나쁜 음식']
+        meal.dinner_good_foods = classified_meals['dinner']['좋은 음식']
+        meal.dinner_bad_foods = classified_meals['dinner']['나쁜 음식']
+        meal.snack_good_foods = classified_meals['snack']['좋은 음식']
+        meal.snack_bad_foods = classified_meals['snack']['나쁜 음식']
+
+        if total_score < 0:
+            meal.overall_status = "bad"
+        elif 0 <= total_score < 200:
+            meal.overall_status = "soso"
+        else:
+            meal.overall_status = "good"
+
         meal.save()
 
-        # 전체 점수에 따른 상태 분류
-        if total_score < 0:
-            overall_status = "bad"
-        elif 0 <= total_score < 200:
-            overall_status = "soso"
-        else:
-            overall_status = "good"
-
+        response_data = MealSerializer(meal).data
         response_data.update(classified_meals)
-        response_data['overall_status'] = overall_status
 
         return Response({"message": "식사 기록이 생성되었습니다.", "data": response_data}, status=status.HTTP_201_CREATED)
-
+    
     def put(self, request):
         date = request.data.get('date')
-        meals = Meal.objects.filter(date=date)
-        if not meals.exists():
-            return Response({"message": "해당 날짜에 대한 식사 기록이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
-
         user_username = request.data.get('username')
         user = get_object_or_404(User, username=user_username)
         
-        constitution_8 = user.constitution_8
-
-        data = request.data.copy()
-        data['user'] = user
-
-        for meal in meals:
-            meal.user = user
-            meal.save()
+        meals = Meal.objects.filter(user=user, date=date)
+        if not meals.exists():
+            return Response({"message": "해당 날짜에 대한 식사 기록이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
         total_score = 0
         classified_meals = {
@@ -253,51 +240,60 @@ class MealAPIView(APIView):
             'snack': {'좋은 음식': [], '나쁜 음식': []}
         }
 
-        response_data = {
-            "username": user.username,
-            "constitution_8": user.constitution_8,
-            "date": date,
-            "morning": [],
-            "lunch": [],
-            "dinner": [],
-            "snack": []
-        }
-
         for meal in meals:
             for meal_time in ['morning', 'lunch', 'dinner', 'snack']:
-                if meal_time in data:
+                if meal_time in request.data:
                     menus = []
-                    for menu_data in data[meal_time]:
-                        menu = create_menu(menu_data)
-                        menus.append(menu)
-                        serialized_menu = MenuSerializer(menu).data
-                        response_data[meal_time].append(serialized_menu)
+                    for menu_data in request.data[meal_time]:
+                        menu_serializer = MenuSerializer(data=menu_data)
+                        if menu_serializer.is_valid():
+                            menu = menu_serializer.save()
+                            menus.append(menu)
+                        else:
+                            return Response(menu_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                     getattr(meal, meal_time).set(menus)
 
-                    # 체질에 따른 음식 점수 계산 및 분류
-                    for menu_data in data[meal_time]:
-                        components = menu_data.get('animal_protein', []) + menu_data.get('vegetable_protein', []) + menu_data.get('carbohydrate', []) + menu_data.get('root_vegetables', []) + menu_data.get('vegetables', []) + menu_data.get('herb', []) + menu_data.get('seaweed', []) + menu_data.get('fruit', [])
-                        score = calculate_score(constitution_8, components)
+                    for menu_data in request.data[meal_time]:
+                        components = menu_data.get('animal_protein', []) + \
+                                     menu_data.get('vegetable_protein', []) + \
+                                     menu_data.get('carbohydrate', []) + \
+                                     menu_data.get('root_vegetables', []) + \
+                                     menu_data.get('vegetables', []) + \
+                                     menu_data.get('herb', []) + \
+                                     menu_data.get('seaweed', []) + \
+                                     menu_data.get('fruit', [])
+                        score = calculate_score(user.constitution_8, components)
                         total_score += score
                         if score >= 0:
                             classified_meals[meal_time]['좋은 음식'].append(menu_data['menu_name'])
                         else:
                             classified_meals[meal_time]['나쁜 음식'].append(menu_data['menu_name'])
 
+            meal.total_score = total_score
+            meal.morning_good_foods = classified_meals['morning']['좋은 음식']
+            meal.morning_bad_foods = classified_meals['morning']['나쁜 음식']
+            meal.lunch_good_foods = classified_meals['lunch']['좋은 음식']
+            meal.lunch_bad_foods = classified_meals['lunch']['나쁜 음식']
+            meal.dinner_good_foods = classified_meals['dinner']['좋은 음식']
+            meal.dinner_bad_foods = classified_meals['dinner']['나쁜 음식']
+            meal.snack_good_foods = classified_meals['snack']['좋은 음식']
+            meal.snack_bad_foods = classified_meals['snack']['나쁜 음식']
+
+            if total_score < 0:
+                meal.overall_status = "bad"
+            elif 0 <= total_score < 200:
+                meal.overall_status = "soso"
+            else:
+                meal.overall_status = "good"
+
             meal.save()
 
-        # 전체 점수에 따른 상태 분류
-        if total_score < 0:
-            overall_status = "bad"
-        elif 0 <= total_score < 200:
-            overall_status = "soso"
-        else:
-            overall_status = "good"
+        response_data = MealSerializer(meals.first()).data
         response_data.update(classified_meals)
-        response_data['overall_status'] = overall_status
 
         return Response({"message": "특정 날짜의 식사 기록이 수정되었습니다.", "data": response_data}, status=status.HTTP_200_OK)
-    
+
+
     def delete(self, request):
         date = request.data.get('date')
         meals = Meal.objects.filter(date=date)
