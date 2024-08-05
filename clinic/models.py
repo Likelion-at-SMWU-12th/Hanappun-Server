@@ -12,8 +12,8 @@ class Clinic(models.Model):
     lon = models.FloatField("경도")
     call = models.CharField("전화번호", max_length=50)
 
-    image_1 = models.URLField("한의원 사진 1", null=True, blank=True)
-    image_2 = models.URLField("한의원 사진 2", null=True, blank=True)
+    image_1 = models.URLField("한의원 사진 1", null=True, blank=True, max_length=2000)
+    image_2 = models.URLField("한의원 사진 2", null=True, blank=True, max_length=2000)
     
     
     clinic_categories = (
