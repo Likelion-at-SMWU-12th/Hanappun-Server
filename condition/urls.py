@@ -9,5 +9,5 @@ urlpatterns = [
     path('conditions/', ConditionListView.as_view(), name='condition-list'),
     #path('condition/<int:pk>/', ConditionUpdateView.as_view(), name='condition-update'),
     #path('condition/delete/<int:pk>/', ConditionDeleteView.as_view(), name='condition-delete'),
-    path('condition/<str:date>/', ConditionByDateView.as_view(), name='condition-by-date'),
+    path('condition/<str:username>/<str:date>/', ConditionByDateView.as_view(), name='condition-by-date'),
 ]
