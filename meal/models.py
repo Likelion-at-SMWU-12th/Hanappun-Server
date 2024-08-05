@@ -76,7 +76,16 @@ class Meal(models.Model):
     lunch = models.ManyToManyField(Menu, related_name='lunch_meals', blank=True)
     dinner = models.ManyToManyField(Menu, related_name='dinner_meals', blank=True)
     snack = models.ManyToManyField(Menu, related_name='snack_meals', blank=True)
+    total_score = models.IntegerField(default=0)
+    overall_status = models.CharField(max_length=20, default='soso')
+    morning_good_foods = models.JSONField(default=list)
+    morning_bad_foods = models.JSONField(default=list)
+    lunch_good_foods = models.JSONField(default=list)
+    lunch_bad_foods = models.JSONField(default=list)
+    dinner_good_foods = models.JSONField(default=list)
+    dinner_bad_foods = models.JSONField(default=list)
+    snack_good_foods = models.JSONField(default=list)
+    snack_bad_foods = models.JSONField(default=list)
 
     def __str__(self):
         return f'{self.user} - {self.date}'
-
