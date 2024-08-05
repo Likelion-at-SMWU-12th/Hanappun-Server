@@ -180,13 +180,18 @@ class EventOfToday(APIView):
             else:
                 warn_message = ""
 
+            
+            if user.my_clinic is None:
+                my_clinic_name = ""
+            else:
+                my_clinic_name = user.my_clinic.name
 
             return JsonResponse({
                 "message": "조회에 성공하였습니다.",
                 "result": {
                     **event_serializer.data,
                     "nickname" : user.nickname,
-                    "my_clinic": user.my_clinic.name,
+                    "my_clinic": my_clinic_name,
                     "my_constitution_8" : user.constitution_8,
                     "warn_message" : warn_message,
                     "friend_usernames": friend_nickname,
