@@ -306,3 +306,9 @@ class MealAPIView(APIView):
 
         meals.delete()
         return Response({"message": "특정 날짜의 식사 기록이 삭제되었습니다."}, status=status.HTTP_204_NO_CONTENT)
+
+class ViewMealByDate(APIView):
+    def get(self, request, date):
+        meals = Meal.objects.filter(date = date)
+        serializer = MealSerializer(meals, many=True)
+        return Response({"message": "특정 날의 식사 기록 조회 성공", "data": serializer.data}, status=status.HTTP_200_OK)
