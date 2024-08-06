@@ -77,7 +77,7 @@ ROOT_URLCONF = 'HanaCare.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['FRONTEND'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -151,5 +151,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ROOT_DIR = os.path.dirname(BASE_DIR)
-
-STATICFILES_DIRS = "/home/ec2-user/Hanappun-Server/FRONTEND/build/static"
