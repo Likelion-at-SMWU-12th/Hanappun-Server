@@ -160,7 +160,11 @@ class MealAPIView(APIView):
         if not user.constitution_8:
             return Response({"message": "체질 정보가 존재하지 않습니다.",}, status=status.HTTP_404_NOT_FOUND)
 
-        meal = Meal.objects.create(user=user, date=date)
+        meal = Meal.objects.filter(user=user, date=date).first()
+        if(meal is not None):
+            return Response({"message": "해당 날짜에 이미 기록이 존재합니다.",}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            meal = Meal.objects.create(user=user, date=date)
 
         data = request.data.copy()
         data['user'] = user
