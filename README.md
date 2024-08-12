@@ -50,6 +50,7 @@
 | -------- | --------- | ------------------------------------------------- | ------------------------- |
 | ✨경민서 | Back-end  | [mxinseo](https://github.com/mxinseo)  |         |
 | ✨서문지 | Back-end | [SEOMUNJI](https://github.com/SEOMUNJI)  |      |
+| ✨이현정 | Front-end | [hyhy-j](https://github.com/hyhy-j)  |      |
 
 <br/>
 
