@@ -18,10 +18,17 @@
 
 ## 주요 기능
 ![숙명여자대학교_하나뿐팀_한케어 (1)_page-0003](https://github.com/user-attachments/assets/645a522a-882e-432c-8cac-ea9e7ee9f492)
-![숙명여자대학교_하나뿐팀_한케어 (1)_page-0005](https://github.com/user-attachments/assets/70e68bf8-5b25-4118-b72e-332672226801)
+
+<div>    
+    <img align="center" src="https://github.com/user-attachments/assets/6ed79790-8c78-43db-a507-5edbca620e61" /> 
+    <img align="center"  src="https://github.com/user-attachments/assets/4a6c391c-3615-4b99-989a-a6e8622d1a5f" /> 
+    <img align="center"  src="https://github.com/user-attachments/assets/961a12a1-7731-4f8b-8fe3-c8a62b4dde6f" /> 
+    <img align="center" src="https://github.com/user-attachments/assets/659e9ad7-cec3-4e15-8a83-b95d7ceb2efd" /> 
+</div>
 
 ## API 명세서
-[하나뿐-API 명세서](https://charming-iguanadon-7e9.notion.site/API-bc962dc983424d5aa2967cd4850887f6?pvs=74)
+[하나뿐 - API 명세서](https://charming-iguanadon-7e9.notion.site/API-bc962dc983424d5aa2967cd4850887f6?pvs=74)
+
 
 ## 멤버
 | 이름     | 개발분야  | 개인 레포                                         | 역할                    |
