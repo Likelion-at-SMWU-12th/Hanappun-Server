@@ -49,7 +49,7 @@
 | 이름     | 개발분야  | 개인 레포                                         | 역할                    |
 | -------- | --------- | ------------------------------------------------- | ------------------------- |
 | ✨경민서 | Back-end  | [mxinseo](https://github.com/mxinseo)  |         |
-| ✨서문지 | Back-end | [SEOMUNJI](https://github.com/SEOMUNJI)  |      |
+| ✨서문지 | Back-end | [SEOMUNJI](https://github.com/SEOMUNJI)  | 식사 기록/분석, 컨디션 기록 구현, 더미데이터 정리 및 추가 |
 
 <br/>
 
