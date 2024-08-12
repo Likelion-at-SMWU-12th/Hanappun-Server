@@ -27,4 +27,4 @@
 | 이름     | 개발분야  | 개인 레포                                         | 역할                    |
 | -------- | --------- | ------------------------------------------------- | ------------------------- |
 | ✨경민서 | Back-end  | [mxinseo](https://github.com/mxinseo)  |         |
-| ✨서문지 | Back-end | [](https://github.com/)  |      |
+| ✨서문지 | Back-end | [SEOMUNJI](https://github.com/SEOMUNJI)  |      |
