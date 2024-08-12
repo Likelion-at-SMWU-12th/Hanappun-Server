@@ -50,3 +50,8 @@
 | -------- | --------- | ------------------------------------------------- | ------------------------- |
 | ✨경민서 | Back-end  | [mxinseo](https://github.com/mxinseo)  |         |
 | ✨서문지 | Back-end | [SEOMUNJI](https://github.com/SEOMUNJI)  |      |
+
+<br/>
+
+![숙명여자대학교_하나뿐팀_한케어 (1)_page-0008](https://github.com/user-attachments/assets/fa5e9aa8-1651-4bee-8823-630d861a0a41)
+
