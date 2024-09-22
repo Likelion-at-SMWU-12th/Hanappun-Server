@@ -58,7 +58,6 @@ class CreateReservation(APIView):
             return Response({"message": "나의 한의원이 설정되어 있지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
         
         data = request.data.copy()
-        data['clinic'] = user.my_clinic.id 
         
         serializer = ReservationCreateSerializer(data=data, context={'request': request})
         if serializer.is_valid():
