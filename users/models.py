@@ -45,7 +45,7 @@ class User(AbstractUser):
         ('토양', '토양'),
         ('토음', '토음')
     )
-    constitution_8 = models.CharField("8체질", choices=constitution_8_categories, max_length=50, blank=True)
+    constitution_8 = models.CharField("8체질", choices=constitution_8_categories, max_length=50, blank=True, null=True)
     my_clinic = models.ForeignKey(Clinic, verbose_name="나의 한의원", on_delete=models.SET_NULL, blank=True, null=True)
 
     objects = UserManager()
