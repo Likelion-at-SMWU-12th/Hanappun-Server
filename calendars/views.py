@@ -213,4 +213,4 @@ class EventOfToday(APIView):
                 }
             }, status=status.HTTP_200_OK)
         except Exception as error:
-            return JsonResponse({"11message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"EventOfToday_message": str(error)}, status=status.HTTP_400_BAD_REQUEST)

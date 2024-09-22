@@ -16,7 +16,7 @@ class ReservationSerializer(ModelSerializer):
 
     class Meta:
         model = Reservation
-        fields = ['id', 'client', 'date', 'clinic']
+        fields = ['id', 'client', 'date']
 
 # minseo : 예약 'POST', 'PUT', 'PATCH' 
 class ReservationCreateSerializer(ModelSerializer):
@@ -24,4 +24,4 @@ class ReservationCreateSerializer(ModelSerializer):
 
     class Meta:
         model = Reservation
-        fields = ['id', 'client', 'date', 'clinic']
+        fields = ['id', 'client', 'date']
