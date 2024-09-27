@@ -39,8 +39,29 @@ class EventByDate(APIView):
 
             # 해당일의 식단 정보
             try:
-                meal = Meal.objects.get(user=user, date=date)
-                meal_serializer = MealSerializer(meal).data
+                meal = Meal.objects.filter(user=user, date=date)  # 해당 날짜와 사용자에 맞는 모든 식사 가져오기
+                meal_serializer = MealSerializer(meal, many=True).data  # 다중 객체이므로 many=True
+
+                # 식사 시간을 기준으로 분류할 딕셔너리
+                meal_list = {
+                    "morning_list": [],
+                    "lunch_list": [],
+                    "dinner_list": [],
+                    "snack_list": []
+                }
+
+                # 각 식사 항목을 식사 시간에 따라 분류
+                for menu in meal_serializer:
+                    if menu['timing'] == "morning":
+                        meal_list["morning_list"].append(menu)
+                    elif menu['timing'] == "lunch":
+                        meal_list["lunch_list"].append(menu)
+                    elif menu['timing'] == "dinner":
+                        meal_list["dinner_list"].append(menu)
+                    elif menu['timing'] == "snack":
+                        meal_list["snack_list"].append(menu)
+                
+
             except Meal.DoesNotExist:
                 meal_serializer = None
 
@@ -65,7 +86,7 @@ class EventByDate(APIView):
                 "result": {
                     **event_serializer.data,
                     "condition": condition_serializer,
-                    "meal": meal_serializer
+                    "meal": meal_list
                 }
             }, status=status.HTTP_200_OK)
         except Exception as error:
@@ -168,11 +189,30 @@ class EventOfToday(APIView):
 
             # 해당일의 식단 정보
             try:
-                meals = Meal.objects.filter(user=user, date=date)
-                meal_serializer = MealSerializer(meals, many=True).data 
+                meal = Meal.objects.filter(user=user, date=date)  # 해당 날짜와 사용자에 맞는 모든 식사 가져오기
+                meal_serializer = MealSerializer(meal, many=True).data  # 다중 객체이므로 many=True
+
+                # 식사 시간을 기준으로 분류할 딕셔너리
+                meal_list = {
+                    "morning_list": [],
+                    "lunch_list": [],
+                    "dinner_list": [],
+                    "snack_list": []
+                }
+
+                # 각 식사 항목을 식사 시간에 따라 분류
+                for menu in meal_serializer:
+                    if menu['timing'] == "morning":
+                        meal_list["morning_list"].append(menu)
+                    elif menu['timing'] == "lunch":
+                        meal_list["lunch_list"].append(menu)
+                    elif menu['timing'] == "dinner":
+                        meal_list["dinner_list"].append(menu)
+                    elif menu['timing'] == "snack":
+                        meal_list["snack_list"].append(menu)
 
             except Meal.DoesNotExist:
-                meal_serializer = None
+                meal_list = None
 
 
             # 친구 목록
@@ -210,7 +250,7 @@ class EventOfToday(APIView):
                     "warn_message" : warn_message,
                     "friend_usernames": friend_nickname,
                     "condition": condition_serializer,
-                    "meal" : meal_serializer
+                    "meal" : meal_list
                 }
             }, status=status.HTTP_200_OK)
         except Exception as error:
