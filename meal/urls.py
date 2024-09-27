@@ -16,6 +16,6 @@ from .views import MealListCreateAPIView, MealDetailByDateAPIView, DeleteMealDet
 urlpatterns = [
     path('meal/<str:username>/', MealListCreateAPIView.as_view(), name='meal-list-create'),
     path('meal/<str:username>/date/', MealDetailByDateAPIView.as_view(), name='meal-detail-by-date'),  # 날짜 기반 수정 및 삭제
-    path('meal/<str:username>/<int:foodID>', DeleteMealDetailByDateAPIView.as_view(), name='meal-delete-by-name')
+    path('meal/<str:username>/<int:foodID>', DeleteMealDetailByDateAPIView.as_view(), name='meal-delete-by-name'),
     path('meal/<str:username>/<int:id>', GetMealDataByID.as_view(), name='meal-list-create'),
 ]
