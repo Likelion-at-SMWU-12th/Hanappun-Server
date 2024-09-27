@@ -240,7 +240,7 @@ class GetOrDeleteMealByidAPIView(APIView):
             meal_item.delete()
             return Response({"message": f"{foodID} 메뉴가 삭제되었습니다."}, status=status.HTTP_200_OK)
 
-    def get(self, request, username, foodID):
+     def get(self, request, username, foodID):
         user = get_object_or_404(User, username=username)
         try:
             meal = Meal.objects.get(user=user, id=foodID)
