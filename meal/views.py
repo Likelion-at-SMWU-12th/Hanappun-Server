@@ -256,3 +256,13 @@ class MealDetailByDateAPIView(APIView):
             return Response({"message": f"{menu_name} 메뉴가 삭제되었습니다."}, status=status.HTTP_200_OK)
     
         return Response({"error": "'name' 필드가 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+class GetMealDataByID(APIView):
+    def get(self, request, username, id):
+        user = get_object_or_404(User, username=username)
+        meal = Meal.objects.filter(user=user, id=id)
+        if not meal.exists():
+            return Response({"error": f"No meals found for {id}."}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            serializer = MealSerializer(meal, many=True)
+            return Response(serializer.data)
