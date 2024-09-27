@@ -229,7 +229,7 @@ class MealDetailByDateAPIView(APIView):
         return Response({"error": "'name' 필드가 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
     
 
-class DeleteMealDetailByDateAPIView(APIView):
+class GetOrDeleteMealByidAPIView(APIView):
      def delete(self, request, username, foodID):
         user = get_object_or_404(User, username=username)
 
@@ -240,12 +240,10 @@ class DeleteMealDetailByDateAPIView(APIView):
             meal_item.delete()
             return Response({"message": f"{foodID} 메뉴가 삭제되었습니다."}, status=status.HTTP_200_OK)
 
-
-class GetMealDataByID(APIView):
-    def get(self, request, username, id):
+    def get(self, request, username, foodID):
         user = get_object_or_404(User, username=username)
         try:
-            meal = Meal.objects.get(user=user, id=id)
+            meal = Meal.objects.get(user=user, id=foodID)
             serializer = MealSerializer(meal)
         except Meal.DoesNotExist:
             serializer = None
