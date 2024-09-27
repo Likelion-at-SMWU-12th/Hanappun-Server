@@ -168,8 +168,9 @@ class EventOfToday(APIView):
 
             # 해당일의 식단 정보
             try:
-                meal = Meal.objects.get(user=user, date=date)
-                meal_serializer = MealSerializer(meal).data
+                meals = Meal.objects.filter(user=user, date=date)
+                meal_serializer = MealSerializer(meals, many=True).data 
+
             except Meal.DoesNotExist:
                 meal_serializer = None
 
