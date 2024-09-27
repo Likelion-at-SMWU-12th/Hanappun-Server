@@ -268,14 +268,16 @@ class MealSerializer(serializers.ModelSerializer):
     }
 }
 
-        preferences = body_type_preferences.get(user_constitution, {'likes': [], 'dislikes': []})
+        preferences = body_type_preferences.get(user_constitution, {'likes': [], 'dislikes': [], 'soso': []})
 
-        ingredient_details = {"likes": [], "dislikes": []}
+        ingredient_details = {"likes": [], "dislikes": [], 'soso': []}
         for ingredient in instance.ingredients.all():
             if ingredient.name in preferences['likes']:
                 ingredient_details['likes'].append(ingredient.name)
             elif ingredient.name in preferences['dislikes']:
                 ingredient_details['dislikes'].append(ingredient.name)
+            else:
+                ingredient_details['soso'].append(ingredient.name)
 
         response['ingredient_details'] = ingredient_details
 
