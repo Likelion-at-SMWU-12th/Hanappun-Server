@@ -260,9 +260,10 @@ class MealDetailByDateAPIView(APIView):
 class GetMealDataByID(APIView):
     def get(self, request, username, id):
         user = get_object_or_404(User, username=username)
-        meal = Meal.objects.filter(user=user, id=id)
-        if not meal.exists():
-            return Response({"error": f"No meals found for {id}."}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            serializer = MealSerializer(meal, many=True)
-            return Response(serializer.data)
+        try:
+            meal = Meal.objects.get(user=user, id=id)
+            serializer = MealSerializer(meal)
+        except Meal.DoesNotExist:
+            serializer = None
+            
+        return Response(serializer.data)
