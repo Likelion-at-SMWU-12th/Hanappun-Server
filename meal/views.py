@@ -162,6 +162,7 @@ class MealDetailByDateAPIView(APIView):
             try:
                 date = datetime.strptime(date_str, '%Y-%m-%d').date()
                 meals = Meal.objects.filter(user=user, date=date)
+            
                 if not meals.exists():
                     return Response({"error": f"No meals found for {date_str}."}, status=status.HTTP_404_NOT_FOUND)
             except ValueError:
@@ -170,7 +171,26 @@ class MealDetailByDateAPIView(APIView):
             return Response({"error": "Date parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = MealSerializer(meals, many=True)
-        return Response(serializer.data)
+        # 식사 시간을 기준으로 분류할 딕셔너리
+        meal_list = {
+            "morning_list": [],
+            "lunch_list": [],
+            "dinner_list": [],
+            "snack_list": []
+        }
+
+        # 각 식사 항목을 식사 시간에 따라 분류
+        for menu in serializer.data:
+            if menu['timing'] == "morning":
+                meal_list["morning_list"].append(menu)
+            elif menu['timing'] == "lunch":
+                meal_list["lunch_list"].append(menu)
+            elif menu['timing'] == "dinner":
+                meal_list["dinner_list"].append(menu)
+            elif menu['timing'] == "snack":
+                meal_list["snack_list"].append(menu)
+
+        return Response(meal_list)
     
     def put(self, request, username):
         user = get_object_or_404(User, username=username)
@@ -219,3 +239,15 @@ class DeleteMealDetailByDateAPIView(APIView):
         else:
             meal_item.delete()
             return Response({"message": f"{foodID} 메뉴가 삭제되었습니다."}, status=status.HTTP_200_OK)
+
+
+class GetMealDataByID(APIView):
+    def get(self, request, username, id):
+        user = get_object_or_404(User, username=username)
+        try:
+            meal = Meal.objects.get(user=user, id=id)
+            serializer = MealSerializer(meal)
+        except Meal.DoesNotExist:
+            serializer = None
+            
+        return Response(serializer.data)
