@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from datetime import datetime, timedelta
+from datetime import datetime
 import random
 
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
@@ -12,6 +12,9 @@ from rest_framework import status
 from .serializers import UserSerializer, UserProfileSerializer, AcceptFriendRequestSerializer, FriendsListSerializer, DeleteFriendSerializer
 from .models import User
 from reservation.models import Reservation
+
+from clinic.models import Clinic
+from clinic.serializers import ClinicSerializer
 
 # Create your views here.
 
@@ -92,9 +95,22 @@ class ProfileView(APIView):
         except User.DoesNotExist:
             return Response({"message": "사용자를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
         
+
         serializer = UserProfileSerializer(user)
-        return Response({"message": "조회에 성공하였습니다.",
-                        "result": serializer.data}, status=status.HTTP_200_OK)
+        user_data = serializer.data  
+
+        if user.my_clinic:
+            clinic = Clinic.objects.get(id=user.my_clinic.id)  
+            clinic_data = ClinicSerializer(clinic).data
+            user_data['my_clinic_name'] = clinic_data['name']
+        else:
+            user_data['my_clinic_name'] = None
+        
+        return Response({
+            "message": "조회에 성공하였습니다.",
+            "result": user_data
+        }, status=status.HTTP_200_OK)
+
     
     # 회원 정보 수정
     def patch(self, request):
