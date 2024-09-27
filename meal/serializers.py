@@ -279,15 +279,44 @@ class MealSerializer(serializers.ModelSerializer):
 
         response['ingredient_details'] = ingredient_details
 
-        total_score = instance.total
+        total_score = self.get_daily_total_score(instance.user, instance.date)
+        response['total_daily_score'] = total_score
+
         if total_score < 0:
             response['score_evaluation'] = "bad"
-        elif 0 <= total_score < 200:
+        elif 0 <= total_score < 100:
             response['score_evaluation'] = "soso"
         else:
             response['score_evaluation'] = "good"
 
         return response
+
+    def get_daily_total_score(self, user, date):
+        meals = Meal.objects.filter(user=user, date=date)  # 해당 날짜의 모든 식사 조회
+
+        total_score = 0
+        meal_count = 0
+
+        for meal in meals:
+            meal_score = 0
+
+        # 메뉴에 속한 성분들의 점수를 합산하여 메뉴의 총점 계산
+            for ingredient in meal.ingredients.all():
+                meal_score += self.calculate_score(user.constitution_8, ingredient.name)
+
+        # 메뉴의 총 점수를 전체 총점에 합산
+            total_score += meal_score
+            meal_count += 1
+
+    # 메뉴가 없는 경우 0점 반환
+        if meal_count == 0:
+            return 0
+
+    # 모든 메뉴 점수의 평균 계산
+        daily_average_score = total_score / meal_count
+
+        return daily_average_score
+
 
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredients')
